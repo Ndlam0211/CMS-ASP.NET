@@ -39,7 +39,7 @@
                             <small class="text-secondary">
                                 @post.CreatedDate.ToString("dd/MM/yyyy HH:mm")
                             </small>
-                            <a href="#" class="btn btn-sm btn-primary">Xem chi tiết</a>
+                            <a asp-action="Details" asp-route-id="@post.Id" class="btn btn-sm btn-primary">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>

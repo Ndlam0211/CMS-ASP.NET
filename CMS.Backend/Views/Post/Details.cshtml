@@ -1,0 +1,94 @@
+@using CMS.Data.Entities
+
+@{
+    ViewData["Title"] = Model?.Title ?? "Chi ti?t bài vi?t";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Back to List -->
+            <div class="mb-4">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay l?i danh sách
+                </a>
+            </div>
+
+            <!-- Article Card -->
+            <article class="card shadow-sm">
+                <!-- Featured Image -->
+                @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" style="height: 400px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="card-img-top bg-secondary" style="height: 400px; display: flex; align-items: center; justify-content: center;">
+                        <span class="text-white">Không có hình ?nh</span>
+                    </div>
+                }
+
+                <!-- Article Content -->
+                <div class="card-body">
+                    <!-- Title -->
+                    <h1 class="card-title display-5">@Model?.Title</h1>
+
+                    <!-- Meta Information -->
+                    <div class="border-bottom pb-3 mb-4">
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-calendar-event"></i>
+                            Ngày ??ng: <strong>@Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")</strong>
+                        </p>
+                        @if (Model?.Category != null)
+                        {
+                            <p class="text-muted mb-0 mt-2">
+                                <i class="bi bi-folder"></i>
+                                Danh m?c: <strong>@Model.Category.Name</strong>
+                            </p>
+                        }
+                    </div>
+
+                    <!-- Article Content -->
+                    <div class="article-content mb-5">
+                        @if (!string.IsNullOrEmpty(Model?.Content))
+                        {
+                            <p>@Html.Raw(Model.Content)</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">N?i dung bài vi?t không có s?n.</p>
+                        }
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 border-top pt-4">
+                        <a href="#" class="btn btn-warning">
+                            <i class="bi bi-pencil-square"></i> Ch?nh s?a
+                        </a>
+                        <a href="#" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Related Posts Section (Optional) -->
+            <div class="mt-5">
+                <h3 class="mb-4">Bài vi?t khác</h3>
+                <p class="text-muted">Các bài vi?t liên quan s? ???c hi?n th? ? ?ây.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .article-content {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #333;
+    }
+
+    .article-content p {
+        margin-bottom: 1.5rem;
+    }
+</style>

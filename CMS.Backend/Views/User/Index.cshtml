@@ -1,0 +1,88 @@
+@using CMS.Data.Entities
+
+@{
+    ViewData["Title"] = "Qu?n lý ng??i dùng";
+}
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Qu?n lý ng??i dùng</h1>
+                <a href="#" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Thêm ng??i dùng
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (Model != null && Model.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>H? và tên</th>
+                                <th>Role</th>
+                                <th>Hành ??ng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.Id</td>
+                                    <td>
+                                        <strong>@user.Username</strong>
+                                    </td>
+                                    <td>@user.FullName</td>
+                                    <td>
+                                        @if (user.Role == "Admin")
+                                        {
+                                            <span class="badge bg-danger">@user.Role</span>
+                                        }
+                                        else if (user.Role == "Editor")
+                                        {
+                                            <span class="badge bg-info">@user.Role</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@user.Role</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i> S?a
+                                        </a>
+                                        <a href="#" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <p class="text-muted">
+                            T?ng c?ng: <strong>@Model.Count</strong> ng??i dùng
+                        </p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Không có d? li?u</h4>
+                    <p>Hi?n t?i không có ng??i dùng nào trong h? th?ng.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

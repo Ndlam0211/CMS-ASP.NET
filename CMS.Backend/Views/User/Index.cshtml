@@ -1,16 +1,16 @@
-@using CMS.Data.Entities
+﻿@using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "Qu?n l� ng??i d�ng";
+    ViewData["Title"] = "Quản lý người dùng";
 }
 
 <div class="container my-5">
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
-                <h1 class="display-4">Qu?n l� ng??i d�ng</h1>
+                <h1 class="display-4">Quản lý người dùng</h1>
                 <a href="#" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-circle"></i> Th�m ng??i d�ng
+                    <i class="bi bi-plus-circle"></i> Thêm người dùng
                 </a>
             </div>
         </div>
@@ -26,9 +26,9 @@
                             <tr>
                                 <th>#</th>
                                 <th>Username</th>
-                                <th>H? v� t�n</th>
+                                <th>Họ và tên</th>
                                 <th>Role</th>
-                                <th>H�nh ??ng</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,10 +56,10 @@
                                     </td>
                                     <td>
                                         <a href="#" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i> S?a
+                                            <i class="bi bi-pencil"></i> Chỉnh sửa
                                         </a>
                                         <a href="#" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> X�a
+                                            <i class="bi bi-trash"></i> Xóa
                                         </a>
                                     </td>
                                 </tr>
@@ -71,7 +71,7 @@
                 <div class="row mt-4">
                     <div class="col-12">
                         <p class="text-muted">
-                            T?ng c?ng: <strong>@Model.Count</strong> ng??i d�ng
+                            Tổng cộng: <strong>@Model.Count</strong> người dùng
                         </p>
                     </div>
                 </div>
@@ -79,8 +79,8 @@
             else
             {
                 <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-heading">Kh�ng c� d? li?u</h4>
-                    <p>Hi?n t?i kh�ng c� ng??i d�ng n�o trong h? th?ng.</p>
+                    <h4 class="alert-heading">Không có dữ liệu</h4>
+                    <p>Hiện tại không có người dùng nào trong hệ thống.</p>
                 </div>
             }
         </div>

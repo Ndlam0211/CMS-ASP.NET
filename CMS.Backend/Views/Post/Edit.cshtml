@@ -1,8 +1,8 @@
-@model CMS.Data.Entities.Post
+﻿@model CMS.Data.Entities.Post
 @using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "Ch?nh s?a b�i vi?t";
+    ViewData["Title"] = "Chỉnh sửa bài viết";
 }
 
 <div class="container my-5">
@@ -10,28 +10,28 @@
         <div class="col-lg-8 mx-auto">
             <div class="mb-4">
                 <a asp-action="Index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Quay l?i danh s�ch
+                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
                 </a>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h1 class="card-title display-6">Ch?nh s?a b�i vi?t</h1>
+                    <h1 class="card-title display-6">Chỉnh sửa bài viết</h1>
 
                     <form asp-action="Edit" method="post">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CreatedDate" />
 
                         <div class="mb-3">
-                            <label asp-for="Title" class="form-label">Ti�u ?? <span class="text-danger">*</span></label>
+                            <label asp-for="Title" class="form-label">Tiêu đề <span class="text-danger">*</span></label>
                             <input asp-for="Title" class="form-control" />
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="CategoryId" class="form-label">Danh m?c <span class="text-danger">*</span></label>
+                            <label asp-for="CategoryId" class="form-label">Danh mục <span class="text-danger">*</span></label>
                             <select asp-for="CategoryId" class="form-control">
-                                <option value="">-- Ch?n danh m?c --</option>
+                                <option value="">-- Chọn danh mục --</option>
                                 @foreach (var category in ViewData["Categories"] as List<Category> ?? new List<Category>())
                                 {
                                     <option value="@category.Id" selected="@(category.Id == Model?.CategoryId)">@category.Name</option>
@@ -41,23 +41,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Content" class="form-label">N?i dung <span class="text-danger">*</span></label>
+                            <label asp-for="Content" class="form-label">Nội dung <span class="text-danger">*</span></label>
                             <textarea asp-for="Content" class="form-control" rows="6"></textarea>
                             <span asp-validation-for="Content" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="ImageUrl" class="form-label">URL H�nh ?nh</label>
+                            <label asp-for="ImageUrl" class="form-label">URL Hình ảnh</label>
                             <input asp-for="ImageUrl" class="form-control" />
                             <span asp-validation-for="ImageUrl" class="text-danger"></span>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> C?p nh?t
+                                <i class="bi bi-save"></i> Cập nhật
                             </button>
                             <a asp-action="Index" class="btn btn-secondary">
-                                <i class="bi bi-x-circle"></i> H?y
+                                <i class="bi bi-x-circle"></i> Hủy
                             </a>
                         </div>
                     </form>

@@ -1,24 +1,24 @@
-@using CMS.Data.Entities
+﻿@using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "X�a b�i vi?t";
+    ViewData["Title"] = "Xóa bài viết";
 }
 
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">X�c nh?n x�a</h4>
-                <p>B?n ch?c ch?n mu?n x�a b�i vi?t n�y kh�ng? H�nh ??ng n�y kh�ng th? ho�n t�c.</p>
+                <h4 class="alert-heading">Xác nhận xóa</h4>
+                <p>Bạn chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.</p>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@Model?.Title</h5>
                     <p class="card-text">
-                        <strong>Danh m?c:</strong> @Model?.Category?.Name<br />
-                        <strong>Ng�y ??ng:</strong> @Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")<br />
-                        <strong>N?i dung:</strong><br />
+                        <strong>Danh mục:</strong> @Model?.Category?.Name<br />
+                        <strong>Ngày đăng:</strong> @Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")<br />
+                        <strong>Nội dung:</strong><br />
                         @if (!string.IsNullOrEmpty(Model?.Content))
                         {
                             <small>@Html.Raw(Model.Content.Length > 200 ? Model.Content.Substring(0, 200) + "..." : Model.Content)</small>
@@ -28,10 +28,10 @@
                     <form asp-action="Delete" method="post" style="display:inline;">
                         <input type="hidden" name="id" value="@Model?.Id" />
                         <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> X�a
+                            <i class="bi bi-trash"></i> Xóa
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> H?y
+                            <i class="bi bi-x-circle"></i> Hủy
                         </a>
                     </form>
                 </div>

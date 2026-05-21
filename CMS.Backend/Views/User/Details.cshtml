@@ -1,7 +1,7 @@
-@using CMS.Data.Entities
+﻿@using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "Chi ti?t ng??i d�ng";
+    ViewData["Title"] = "Chi tiết người dùng";
 }
 
 <div class="container my-5">
@@ -9,7 +9,7 @@
         <div class="col-lg-8 mx-auto">
             <div class="mb-4">
                 <a asp-action="Index" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Quay l?i danh s�ch
+                    <i class="bi bi-arrow-left"></i> Quay lại danh sách
                 </a>
             </div>
 
@@ -19,17 +19,17 @@
 
                     <div class="border-bottom pb-3 mb-4">
                         <p class="mb-2">
-                            <strong>T�i kho?n:</strong> @Model?.Username
+                            <strong>Tài khoản:</strong> @Model?.Username
                         </p>
                         <p class="mb-0">
-                            <strong>Vai tr�:</strong> 
+                            <strong>Vai trò:</strong> 
                             @if (Model?.Role == "Admin")
                             {
-                                <span class="badge bg-danger">Qu?n tr? vi�n</span>
+                                <span class="badge bg-danger">Quản trị viên</span>
                             }
                             else if (Model?.Role == "Editor")
                             {
-                                <span class="badge bg-info">Bi�n t?p vi�n</span>
+                                <span class="badge bg-info">Biên tập viên</span>
                             }
                             else
                             {
@@ -40,10 +40,10 @@
 
                     <div class="d-flex gap-2 border-top pt-4 mt-4">
                         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">
-                            <i class="bi bi-pencil-square"></i> Ch?nh s?a
+                            <i class="bi bi-pencil-square"></i> Chỉnh sửa
                         </a>
                         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> X�a
+                            <i class="bi bi-trash"></i> Xóa
                         </a>
                     </div>
                 </div>

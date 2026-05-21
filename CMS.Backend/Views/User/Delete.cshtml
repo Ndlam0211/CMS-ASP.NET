@@ -1,32 +1,32 @@
-@using CMS.Data.Entities
+Ôªø@using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "XÛa ng??i d˘ng";
+    ViewData["Title"] = "X√≥a ng∆∞·ªùi d√πng";
 }
 
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">X·c nh?n xÛa</h4>
-                <p>B?n ch?c ch?n mu?n xÛa ng??i d˘ng n‡y khÙng? H‡nh ??ng n‡y khÙng th? ho‡n t·c.</p>
+                <h4 class="alert-heading">X√°c nh·∫≠n x√≥a</h4>
+                <p>B·∫°n ch·∫Øc ch·∫Øn mu·ªën x√≥a ng∆∞·ªùi d√πng n√†y kh√¥ng? H√†nh ƒë·ªông n√†y kh√¥ng th·ªÉ ho√†n t√°c.</p>
             </div>
 
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">@Model?.FullName</h5>
                     <p class="card-text">
-                        <strong>T‡i kho?n:</strong> @Model?.Username<br />
-                        <strong>Vai trÚ:</strong> @Model?.Role
+                        <strong>T√†i kho·∫£n:</strong> @Model?.Username<br />
+                        <strong>Vai tr√≤:</strong> @Model?.Role
                     </p>
 
                     <form asp-action="Delete" method="post" style="display:inline;">
                         <input type="hidden" name="id" value="@Model?.Id" />
                         <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> XÛa
+                            <i class="bi bi-trash"></i> X√≥a
                         </button>
                         <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> H?y
+                            <i class="bi bi-x-circle"></i> H·ªßy
                         </a>
                     </form>
                 </div>

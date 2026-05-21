@@ -1,132 +1,131 @@
-﻿/*
+/*
  * Sinh vien: Nguyen Dinh Lam
  * MSSV: 2122110509
- * Ngay tao: 14-05-2026
+ * Ngay tao: 21-05-2026
  * Version: 1.0
  */
 
-using CMS.Data;// Kết nối tới lớp dữ liệu bạn vừa tạo
+using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
-    public class CategoryController : Controller
+    public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        // "Tiêm" kết nối vào Controller
-        public CategoryController(ApplicationDbContext context)
+        public CustomerController(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        // GET: Customer/Index
         public IActionResult Index()
         {
-            // Lấy dữ liệu THẬT từ bảng Categories trong SQL
-            var data = _context.Categories.ToList();
-
-            return View(data);
+            var customers = _context.Customers.ToList();
+            return View(customers);
         }
 
-        // GET: Category/Details/5
+        // GET: Customer/Details/5
         public IActionResult Details(int id)
         {
-            var category = _context.Categories
+            var customer = _context.Customers
+                .Include(c => c.Orders)
                 .FirstOrDefault(c => c.Id == id);
 
-            if (category == null)
+            if (customer == null)
                 return NotFound();
 
-            return View(category);
+            return View(customer);
         }
 
-        // GET: Category/Create
+        // GET: Customer/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Category/Create
+        // POST: Customer/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Name,Description")] Category category)
+        public IActionResult Create([Bind("FullName,Email,Phone,Address,Password")] Customer customer)
         {
             if (ModelState.IsValid)
             {
-                _context.Categories.Add(category);
+                _context.Customers.Add(customer);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(category);
+            return View(customer);
         }
 
-        // GET: Category/Edit/5
+        // GET: Customer/Edit/5
         public IActionResult Edit(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category == null)
+            var customer = _context.Customers.Find(id);
+            if (customer == null)
                 return NotFound();
 
-            return View(category);
+            return View(customer);
         }
 
-        // POST: Category/Edit/5
+        // POST: Customer/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Description")] Category category)
+        public IActionResult Edit(int id, [Bind("Id,FullName,Email,Phone,Address,Password")] Customer customer)
         {
-            if (id != category.Id)
+            if (id != customer.Id)
                 return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(customer);
                     _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.Id))
+                    if (!CustomerExists(customer.Id))
                         return NotFound();
                     throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(category);
+            return View(customer);
         }
 
-        // GET: Category/Delete/5
+        // GET: Customer/Delete/5
         public IActionResult Delete(int id)
         {
-            var category = _context.Categories.FirstOrDefault(c => c.Id == id);
-            if (category == null)
+            var customer = _context.Customers.FirstOrDefault(c => c.Id == id);
+            if (customer == null)
                 return NotFound();
 
-            return View(category);
+            return View(customer);
         }
 
-        // POST: Category/Delete/5
+        // POST: Customer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var category = _context.Categories.Find(id);
-            if (category != null)
+            var customer = _context.Customers.Find(id);
+            if (customer != null)
             {
-                _context.Categories.Remove(category);
+                _context.Customers.Remove(customer);
                 _context.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool CustomerExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }

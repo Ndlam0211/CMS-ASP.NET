@@ -1,0 +1,80 @@
+@using CMS.Data.Entities
+
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+}
+
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4">Quản lý khách hàng</h1>
+                <a asp-action="Create" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Thêm khách hàng
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (Model != null && Model.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Họ và tên</th>
+                                <th>Email</th>
+                                <th>Điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var customer in Model)
+                            {
+                                <tr>
+                                    <td>@customer.Id</td>
+                                    <td>
+                                        <strong>@customer.FullName</strong>
+                                    </td>
+                                    <td>@customer.Email</td>
+                                    <td>@customer.Phone</td>
+                                    <td>@customer.Address</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@customer.Id" class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i> Xem
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@customer.Id" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i> Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@customer.Id" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <p class="text-muted">
+                            Tổng cộng: <strong>@Model.Count</strong> khách hàng
+                        </p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Không có dữ liệu</h4>
+                    <p>Hiện tại không có khách hàng nào trong hệ thống.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

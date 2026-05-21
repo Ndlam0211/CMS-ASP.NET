@@ -1,0 +1,68 @@
+@using CMS.Data.Entities
+
+@{
+    ViewData["Title"] = "Chi ti?t danh m?c";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="mb-4">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Quay l?i danh sách
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="card-title display-6">@Model?.Name</h1>
+
+                    <div class="border-bottom pb-3 mb-4">
+                        <p class="mb-0">
+                            <strong>Mô t?:</strong> @Model?.Description
+                        </p>
+                    </div>
+
+                    @if (Model?.Posts != null && Model.Posts.Count > 0)
+                    {
+                        <h5 class="mt-4 mb-3">Bài vi?t trong danh m?c này</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tiêu ??</th>
+                                        <th>Ngày ??ng</th>
+                                        <th>Hành ??ng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var post in Model.Posts)
+                                    {
+                                        <tr>
+                                            <td>@post.Title</td>
+                                            <td>@post.CreatedDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "Post", new { id = post.Id })" class="btn btn-sm btn-info">
+                                                    <i class="bi bi-eye"></i> Xem
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2 border-top pt-4 mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">
+                            <i class="bi bi-pencil-square"></i> Ch?nh s?a
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

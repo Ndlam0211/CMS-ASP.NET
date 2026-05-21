@@ -8,6 +8,7 @@
 using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
@@ -35,13 +36,108 @@ namespace CMS.Backend.Controllers
         {
 
             // Tìm dữ liệu thực từ bảng Posts bằng Id
-            var post = _context.Posts.Find(id);
+            var post = _context.Posts
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == id);
 
             if (post == null) return NotFound();
 
 
             return View(post);
 
+        }
+
+        // GET: Post/Create
+        public IActionResult Create()
+        {
+            ViewData["Categories"] = _context.Categories.ToList();
+            return View();
+        }
+
+        // POST: Post/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId")] Post post)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Posts.Add(post);
+                _context.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["Categories"] = _context.Categories.ToList();
+            return View(post);
+        }
+
+        // GET: Post/Edit/5
+        public IActionResult Edit(int id)
+        {
+            var post = _context.Posts.Find(id);
+            if (post == null)
+                return NotFound();
+
+            ViewData["Categories"] = _context.Categories.ToList();
+            return View(post);
+        }
+
+        // POST: Post/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, [Bind("Id,Title,Content,ImageUrl,CreatedDate,CategoryId")] Post post)
+        {
+            if (id != post.Id)
+                return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(post);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PostExists(post.Id))
+                        return NotFound();
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewData["Categories"] = _context.Categories.ToList();
+            return View(post);
+        }
+
+        // GET: Post/Delete/5
+        public IActionResult Delete(int id)
+        {
+            var post = _context.Posts
+                .Include(p => p.Category)
+                .FirstOrDefault(p => p.Id == id);
+            if (post == null)
+                return NotFound();
+
+            return View(post);
+        }
+
+        // POST: Post/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var post = _context.Posts.Find(id);
+            if (post != null)
+            {
+                _context.Posts.Remove(post);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool PostExists(int id)
+        {
+            return _context.Posts.Any(e => e.Id == id);
         }
 
     }

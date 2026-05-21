@@ -1,0 +1,35 @@
+@using CMS.Data.Entities
+
+@{
+    ViewData["Title"] = "Xóa danh m?c";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Xác nh?n xóa</h4>
+                <p>B?n ch?c ch?n mu?n xóa danh m?c này không? Hành ??ng này không th? hoàn tác.</p>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">@Model?.Name</h5>
+                    <p class="card-text">
+                        <strong>Mô t?:</strong> @Model?.Description
+                    </p>
+
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@Model?.Id" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Xóa
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> H?y
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

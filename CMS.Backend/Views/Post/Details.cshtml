@@ -62,10 +62,10 @@
 
                     <!-- Action Buttons -->
                     <div class="d-flex gap-2 border-top pt-4">
-                        <a href="#" class="btn btn-warning">
+                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">
                             <i class="bi bi-pencil-square"></i> Chỉnh sửa
                         </a>
-                        <a href="#" class="btn btn-danger">
+                        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">
                             <i class="bi bi-trash"></i> Xóa
                         </a>
                     </div>

@@ -1,32 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+ * Sinh vien: Nguyen Dinh Lam
+ * MSSV: 2122110509
+ * Ngay tao: 14-05-2026
+ * Version: 1.0
+ */
+
+using CMS.Data;
 using CMS.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CMS.Backend.Controllers
 {
     public class UserController : Controller
     {
+
+        private readonly ApplicationDbContext _context;
+
+        // "Tiêm" kết nối vào Controller
+        public UserController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
         {
-            // Tạo mock data cho 2 tài khoản người dùng
-            var users = new List<User>
-            {
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    FullName = "Nguyễn Đình Lâm",
-                    Role = "Admin",
-                    PasswordHash = "hashed_password_admin_123"
-                },
-                new User
-                {
-                    Id = 2,
-                    Username = "editor",
-                    FullName = "Trần Thị Bích",
-                    Role = "Editor",
-                    PasswordHash = "hashed_password_editor_456"
-                }
-            };
+            // Lấy dữ liệu THẬT từ bảng Users trong SQL
+            var users = _context.Users.ToList();
 
             return View(users);
         }

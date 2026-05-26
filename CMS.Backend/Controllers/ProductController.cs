@@ -9,6 +9,10 @@ using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System;
+using System.Linq;
 
 namespace CMS.Backend.Controllers
 {
@@ -51,13 +55,49 @@ namespace CMS.Backend.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product)
+        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile uploadImage)
         {
             if (ModelState.IsValid)
             {
-                _context.Products.Add(product);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    if (uploadImage != null && uploadImage.Length > 0)
+                    {
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(uploadImage.FileName).ToLower();
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("uploadImage", "Ch? ch?p nh?n file ?nh (JPG, PNG, GIF)");
+                            ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
+                            return View(product);
+                        }
+
+                        if (uploadImage.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("uploadImage", "Kích th??c file không ???c v??t quá 5MB");
+                            ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
+                            return View(product);
+                        }
+
+                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                        string fileName = Guid.NewGuid().ToString() + extension;
+                        string filePath = Path.Combine(folder, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            uploadImage.CopyTo(stream);
+                        }
+                        product.ImageUrl = "/uploads/" + fileName;
+                    }
+
+                    _context.Products.Add(product);
+                    _context.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Có l?i khi l?u ?nh: " + ex.Message);
+                }
             }
 
             ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
@@ -78,7 +118,7 @@ namespace CMS.Backend.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product)
+        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile uploadImage)
         {
             if (id != product.Id)
                 return NotFound();
@@ -87,6 +127,43 @@ namespace CMS.Backend.Controllers
             {
                 try
                 {
+                    if (uploadImage != null && uploadImage.Length > 0)
+                    {
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var extension = Path.GetExtension(uploadImage.FileName).ToLower();
+                        if (!allowedExtensions.Contains(extension))
+                        {
+                            ModelState.AddModelError("uploadImage", "Ch? ch?p nh?n file ?nh (JPG, PNG, GIF)");
+                            ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
+                            return View(product);
+                        }
+
+                        if (uploadImage.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("uploadImage", "Kích th??c file không ???c v??t quá 5MB");
+                            ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
+                            return View(product);
+                        }
+
+                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                        string fileName = Guid.NewGuid().ToString() + extension;
+                        string filePath = Path.Combine(folder, fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            uploadImage.CopyTo(stream);
+                        }
+                        product.ImageUrl = "/uploads/" + fileName;
+                    }
+                    else
+                    {
+                        var old = _context.Products.AsNoTracking().FirstOrDefault(p => p.Id == product.Id);
+                        if (old != null && string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            product.ImageUrl = old.ImageUrl;
+                        }
+                    }
+
                     _context.Update(product);
                     _context.SaveChanges();
                 }

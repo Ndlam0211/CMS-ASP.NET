@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <h1 class="card-title display-6">Thêm sản phẩm mới</h1>
 
-                    <form asp-action="Create" method="post">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
                             <input asp-for="Name" class="form-control" placeholder="Nhập tên sản phẩm" />
@@ -48,8 +48,8 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="ImageUrl" class="form-label">URL Hình ảnh</label>
-                            <input asp-for="ImageUrl" class="form-control" placeholder="https://..." />
+                            <label asp-for="ImageUrl" class="form-label">Hình ảnh sản phẩm</label>
+                            <input asp-for="ImageUrl" type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
                         </div>
 
                         <div class="mb-3">
@@ -78,3 +78,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const uploadInput = document.getElementById('uploadImage');
+        // create preview element
+        const parent = uploadInput?.parentElement;
+        if (uploadInput && parent) {
+            const previewWrapper = document.createElement('div');
+            previewWrapper.className = 'mb-3';
+            previewWrapper.style.display = 'none';
+            previewWrapper.id = 'imagePreview';
+            previewWrapper.innerHTML = '<label class="form-label">Xem trước</label><div class="border rounded p-2" style="background:#f8f9fa;"><img id="previewImg" class="img-fluid rounded" style="max-height:200px;" /></div>';
+            parent.parentElement.insertBefore(previewWrapper, parent.nextSibling);
+
+            const previewImg = previewWrapper.querySelector('#previewImg');
+            uploadInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (ev) {
+                        previewImg.src = ev.target.result;
+                        previewWrapper.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>

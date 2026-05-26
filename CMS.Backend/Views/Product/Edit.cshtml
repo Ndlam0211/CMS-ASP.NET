@@ -18,7 +18,7 @@
                 <div class="card-body">
                     <h1 class="card-title display-6">Chỉnh sửa sản phẩm</h1>
 
-                    <form asp-action="Edit" method="post">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data" id="productForm">
                         <input type="hidden" asp-for="Id" />
 
                         <div class="mb-3">
@@ -50,8 +50,15 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="ImageUrl" class="form-label">URL hình ảnh</label>
-                            <input asp-for="ImageUrl" class="form-control" />
+                            <label asp-for="ImageUrl" class="form-label">Hình ảnh sản phẩm</label>
+                            @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+                            {
+                                <div class="mb-2">
+                                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded" style="max-height: 180px; object-fit: cover;" />
+                                </div>
+                            }
+                            <input asp-for="ImageUrl" type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
+                            <small class="text-muted">Để trống nếu không muốn thay đổi ảnh</small>
                         </div>
 
                         <div class="mb-3">
@@ -80,3 +87,31 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const uploadInput = document.getElementById('uploadImage');
+        if (!uploadInput) return;
+        // insert preview area
+        const parent = uploadInput.parentElement;
+        const previewWrapper = document.createElement('div');
+        previewWrapper.className = 'mb-3';
+        previewWrapper.style.display = 'none';
+        previewWrapper.id = 'imagePreview';
+        previewWrapper.innerHTML = '<label class="form-label">Xem trước ảnh mới</label><div class="border rounded p-2" style="background:#f8f9fa;"><img id="previewImg" class="img-fluid rounded" style="max-height:200px;" /></div>';
+        parent.parentElement.insertBefore(previewWrapper, parent.nextSibling);
+
+        const previewImg = previewWrapper.querySelector('#previewImg');
+        uploadInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function (ev) {
+                    previewImg.src = ev.target.result;
+                    previewWrapper.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>

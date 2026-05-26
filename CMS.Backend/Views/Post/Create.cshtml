@@ -2,7 +2,7 @@
 @using CMS.Data.Entities
 
 @{
-    ViewData["Title"] = "Chỉnh sửa bài viết";
+    ViewData["Title"] = "Thêm bài viết mới";
 }
 
 <!-- Page Header -->
@@ -18,17 +18,14 @@
         <div class="card-header bg-white border-bottom">
             <div>
                 <h5 class="mb-1">
-                    <i class="bi bi-pencil-square"></i> Chỉnh sửa bài viết
+                    <i class="bi bi-plus-circle"></i> Thêm bài viết mới
                 </h5>
-                <p class="text-muted mb-0 small">Cập nhật thông tin bài viết</p>
+                <p class="text-muted mb-0 small">Tạo bài viết mới</p>
             </div>
         </div>
 
         <div class="card-body">
-            <form asp-action="Edit" method="post" enctype="multipart/form-data">
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="CreatedDate" />
-
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <!-- Main Content -->
                     <div class="col-lg-8">
@@ -42,7 +39,7 @@
                         <!-- Content -->
                         <div class="mb-3">
                             <label asp-for="Content" class="form-label">Nội dung chi tiết <span class="text-danger">*</span></label>
-                            <textarea asp-for="Content" class="form-control" id="Content" rows="10" placeholder="Viết nội dung bài viết tại đây..."></textarea>
+                            <textarea asp-for="Content" class="form-control" id="Content" rows="10" placeholder="Viết nội dung chi tiết tại đây..."></textarea>
                             <span asp-validation-for="Content" class="text-danger small"></span>
                         </div>
                     </div>
@@ -56,33 +53,22 @@
                                 <option value="">-- Chọn danh mục --</option>
                                 @foreach (var category in ViewData["Categories"] as List<Category> ?? new List<Category>())
                                 {
-                                    <option value="@category.Id" selected="@(category.Id == Model?.CategoryId)">@category.Name</option>
+                                    <option value="@category.Id">@category.Name</option>
                                 }
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger small"></span>
                         </div>
 
-                        <!-- Current Image -->
-                        @if (!string.IsNullOrEmpty(Model?.ImageUrl))
-                        {
-                            <div class="mb-3">
-                                <label class="form-label">Hình ảnh hiện tại</label>
-                                <div class="border rounded p-2" style="background: #f8f9fa;">
-                                    <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded" style="max-height: 200px;">
-                                </div>
-                            </div>
-                        }
-
                         <!-- Image Upload -->
                         <div class="mb-3">
-                            <label class="form-label">Thay đổi hình ảnh</label>
+                            <label class="form-label">Hình ảnh</label>
                             <input type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
-                            <small class="text-muted">Để trống nếu không muốn thay đổi</small>
+                            <small class="text-muted">định dạng: JPG, PNG, GIF (Max 5MB)</small>
                         </div>
 
                         <!-- Image Preview -->
                         <div id="imagePreview" class="mb-3" style="display: none;">
-                            <label class="form-label">Xem trước</label>
+                            <label class="form-label">Xem tr??c</label>
                             <div class="border rounded p-2" style="background: #f8f9fa;">
                                 <img id="previewImg" src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
                             </div>
@@ -93,7 +79,7 @@
                         <!-- Action Buttons -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success">
-                                <i class="bi bi-cloud-arrow-up"></i> Cập nhật bài viết
+                                <i class="bi bi-cloud-arrow-up"></i> Lưu bài viết
                             </button>
                             <a asp-action="Index" class="btn btn-secondary">
                                 <i class="bi bi-x-circle"></i> Hủy

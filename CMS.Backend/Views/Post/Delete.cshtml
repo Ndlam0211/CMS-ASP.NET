@@ -4,37 +4,89 @@
     ViewData["Title"] = "Xóa bài viết";
 }
 
-<div class="container my-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <div class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">Xác nhận xóa</h4>
-                <p>Bạn chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.</p>
+<!-- Page Header -->
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<!-- Delete Confirmation -->
+<div style="max-width: 700px;">
+    <div class="alert alert-danger border-start border-5" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5rem; margin-right: 1rem;"></i>
+            <div>
+                <h4 class="alert-heading mb-1">Xác nhận xóa</h4>
+                <p class="mb-0">Bạn chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <!-- Post Preview -->
+            <div class="row mb-3">
+                @if (!string.IsNullOrEmpty(Model?.ImageUrl))
+                {
+                    <div class="col-md-4">
+                        <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded" style="height: 150px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="text-muted">Tiêu ??:</h6>
+                        <p class="h5 mb-2">@Model?.Title</p>
+
+                        <h6 class="text-muted">Danh mục:</h6>
+                        <p class="mb-2">
+                            @if (Model?.Category != null)
+                            {
+                                <span class="badge bg-info">@Model.Category.Name</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không xác định</span>
+                            }
+                        </p>
+
+                        <h6 class="text-muted">Ngày đăng:</h6>
+                        <p class="mb-0">@Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-12">
+                        <h6 class="text-muted">Tiêu đề:</h6>
+                        <p class="h5 mb-2">@Model?.Title</p>
+
+                        <h6 class="text-muted">Danh mục:</h6>
+                        <p class="mb-2">
+                            @if (Model?.Category != null)
+                            {
+                                <span class="badge bg-info">@Model.Category.Name</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không xác định</span>
+                            }
+                        </p>
+
+                        <h6 class="text-muted">Ngày đăng:</h6>
+                        <p class="mb-0">@Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                }
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@Model?.Title</h5>
-                    <p class="card-text">
-                        <strong>Danh mục:</strong> @Model?.Category?.Name<br />
-                        <strong>Ngày đăng:</strong> @Model?.CreatedDate.ToString("dd/MM/yyyy HH:mm")<br />
-                        <strong>Nội dung:</strong><br />
-                        @if (!string.IsNullOrEmpty(Model?.Content))
-                        {
-                            <small>@Html.Raw(Model.Content.Length > 200 ? Model.Content.Substring(0, 200) + "..." : Model.Content)</small>
-                        }
-                    </p>
-
-                    <form asp-action="Delete" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="@Model?.Id" />
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Xóa
-                        </button>
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Hủy
-                        </a>
-                    </form>
-                </div>
+            <!-- Action Buttons -->
+            <div class="pt-3 border-top">
+                <form asp-action="Delete" method="post" style="display: inline;">
+                    <input type="hidden" name="id" value="@Model?.Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Xóa bài viết
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Hủy
+                    </a>
+                </form>
             </div>
         </div>
     </div>

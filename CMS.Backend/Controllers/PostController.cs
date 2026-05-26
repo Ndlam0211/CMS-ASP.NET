@@ -70,10 +70,32 @@ namespace CMS.Backend.Controllers
         // POST: Post/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId")] Post post)
+        public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId")] Post post, IFormFile uploadImage)
         {
             if (ModelState.IsValid)
             {
+                if (uploadImage != null && uploadImage.Length > 0)
+                {
+                    // 1. Định nghĩa đường dẫn lưu file: wwwroot/uploads
+                    string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                    // Tạo thư mục nếu chưa tồn tại
+                    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                    // 2. Tạo tên file duy nhất để không bị đè dữ liệu
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
+                    string filePath = Path.Combine(folder, fileName);
+
+                    // 3. Chép file vào thư mục
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        uploadImage.CopyTo(stream);
+                    }
+
+                    // 4. Lưu đường dẫn vào CSDL để sau này hiển thị
+                    post.ImageUrl = "/uploads/" + fileName;
+                }
+
                 _context.Posts.Add(post);
                 _context.SaveChanges();
                 return RedirectToAction(nameof(Index));
@@ -97,7 +119,7 @@ namespace CMS.Backend.Controllers
         // POST: Post/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Title,Content,ImageUrl,CreatedDate,CategoryId")] Post post)
+        public IActionResult Edit(int id, [Bind("Id,Title,Content,ImageUrl,CreatedDate,CategoryId")] Post post, IFormFile uploadImage)
         {
             if (id != post.Id)
                 return NotFound();
@@ -106,7 +128,38 @@ namespace CMS.Backend.Controllers
             {
                 try
                 {
-                    _context.Update(post);
+                    if (uploadImage != null && uploadImage.Length > 0)
+                    {
+                        // Thực hiện quy trình upload giống như trang Create
+                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
+
+                        string filePath = Path.Combine(folder, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            uploadImage.CopyTo(stream);
+                        }
+
+                        // Cập nhật đường dẫn ảnh mới vào model
+                        post.ImageUrl = "/uploads/" + fileName;
+                    }
+                    else
+                    {
+                        // Bước quan trọng: Nếu không upload ảnh mới, chúng ta phải giữ lại ảnh cũ
+                        // Chúng ta cần lấy lại giá trị ImageUrl từ Database để tránh bị ghi đè thành rỗng
+                        var oldPost = _context.Posts.AsNoTracking().FirstOrDefault(p => p.Id == post.Id);
+
+                        if (oldPost != null && string.IsNullOrEmpty(post.ImageUrl))
+                        {
+                            post.ImageUrl = oldPost.ImageUrl;
+                        }
+                    }
+
+                    _context.Posts.Update(post);
                     _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)

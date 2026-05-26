@@ -9,6 +9,7 @@ using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace CMS.Backend.Controllers
 {
@@ -75,28 +76,45 @@ namespace CMS.Backend.Controllers
         // POST: User/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Username,PasswordHash,FullName,Role")] User user)
+        public IActionResult Edit(int id, [Bind("Id,Username,FullName,Role")] User user, string password)
         {
             if (id != user.Id)
                 return NotFound();
 
-            if (ModelState.IsValid)
+            // 1. Tìm User gốc trong Database để lấy lại mật khẩu cũ nếu cần
+
+            var existingUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == user.Id);
+
+
+            if (existingUser == null) return NotFound();
+
+
+            // 2. Xử lý mật khẩu: Nếu nhập mới thì lấy cái mới, nếu trống thì lấy cái cũ
+
+            if (!string.IsNullOrEmpty(password))
+
             {
-                try
-                {
-                    _context.Update(user);
-                    _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.Id))
-                        return NotFound();
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+
+                user.PasswordHash = password; // Sau này sẽ mã hóa tại đây
             }
 
-            return View(user);
+            else
+
+            {
+
+                user.PasswordHash = existingUser.PasswordHash;
+
+            }
+
+
+            // 3. Cập nhật vào Database
+
+            _context.Users.Update(user);
+
+            _context.SaveChanges();
+
+
+            return RedirectToAction("Index");
         }
 
         // GET: User/Delete/5

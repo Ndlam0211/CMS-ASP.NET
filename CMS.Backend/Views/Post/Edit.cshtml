@@ -25,7 +25,7 @@
         </div>
 
         <div class="card-body">
-            <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <form asp-action="Edit" method="post" enctype="multipart/form-data" id="postForm">
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="CreatedDate" />
 
@@ -42,7 +42,7 @@
                         <!-- Content -->
                         <div class="mb-3">
                             <label asp-for="Content" class="form-label">Nội dung chi tiết <span class="text-danger">*</span></label>
-                            <textarea asp-for="Content" class="form-control" id="Content" rows="10" placeholder="Viết nội dung bài viết tại đây..."></textarea>
+                            <textarea asp-for="Content" class="form-control editor" id="Content" rows="10" placeholder="Viết nội dung bài viết tại đây..."></textarea>
                             <span asp-validation-for="Content" class="text-danger small"></span>
                         </div>
                     </div>
@@ -106,40 +106,50 @@
     </div>
 </div>
 
-<!-- CKEditor 5 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+@section Scripts {
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize CKEditor
-        ClassicEditor
-            .create(document.querySelector('#Content'), {
-                toolbar: {
-                    items: [
-                        'heading', '|', 'bold', 'italic', 'link', '|',
-                        'bulletedList', 'numberedList', 'blockQuote', '|',
-                        'insertTable', '|', 'undo', 'redo'
-                    ]
-                },
-                language: 'vi'
-            })
-            .catch(error => console.error(error));
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize CKEditor for all textareas with class 'editor'
+            const editors = document.querySelectorAll('.editor');
 
-        // Image Preview
-        const uploadInput = document.getElementById('uploadImage');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = document.getElementById('previewImg');
+            editors.forEach(editor => {
+                ClassicEditor
+                    .create(editor, {
+                        toolbar: {
+                            items: [
+                                'heading', '|', 'bold', 'italic', 'link', '|',
+                                'bulletedList', 'numberedList', 'blockQuote', '|',
+                                'insertTable', '|', 'undo', 'redo'
+                            ]
+                        },
+                        language: 'vi'
+                    })
+                    .catch(error => {
+                        console.error('CKEditor Error:', error);
+                    });
+            });
 
-        uploadInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    previewImg.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+            // Image Preview
+            const uploadInput = document.getElementById('uploadImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+
+            if (uploadInput) {
+                uploadInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (event) {
+                            previewImg.src = event.target.result;
+                            imagePreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
             }
         });
-    });
-</script>
+    </script>
+}

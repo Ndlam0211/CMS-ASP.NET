@@ -1,4 +1,5 @@
 ﻿@model CMS.Data.Entities.Category
+@using CMS.Data.Entities
 
 @{
     ViewData["Title"] = "Thêm danh mục mới";
@@ -34,7 +35,6 @@
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label">Mô tả</label>
                     <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả danh mục"></textarea>
-                    <span asp-validation-for="Description" class="text-danger small"></span>
                 </div>
 
                 <div class="d-flex gap-2 pt-3 border-top">

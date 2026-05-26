@@ -20,12 +20,12 @@
                 <h5 class="mb-1">
                     <i class="bi bi-plus-circle"></i> Thêm bài viết mới
                 </h5>
-                <p class="text-muted mb-0 small">Tạo bài viết mới</p>
+                <p class="text-muted mb-0 small">Tạo bài viết mới cho hệ thống</p>
             </div>
         </div>
 
         <div class="card-body">
-            <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="postForm">
                 <div class="row">
                     <!-- Main Content -->
                     <div class="col-lg-8">
@@ -39,7 +39,7 @@
                         <!-- Content -->
                         <div class="mb-3">
                             <label asp-for="Content" class="form-label">Nội dung chi tiết <span class="text-danger">*</span></label>
-                            <textarea asp-for="Content" class="form-control" id="Content" rows="10" placeholder="Viết nội dung chi tiết tại đây..."></textarea>
+                            <textarea asp-for="Content" class="form-control editor" id="Content" rows="10" placeholder="Viết nội dung bài viết tại đây..."></textarea>
                             <span asp-validation-for="Content" class="text-danger small"></span>
                         </div>
                     </div>
@@ -61,14 +61,14 @@
 
                         <!-- Image Upload -->
                         <div class="mb-3">
-                            <label class="form-label">Hình ảnh</label>
+                            <label class="form-label">Hình ảnh đại diện</label>
                             <input type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
-                            <small class="text-muted">định dạng: JPG, PNG, GIF (Max 5MB)</small>
+                            <small class="text-muted">Định dạng: JPG, PNG, GIF (Max 5MB)</small>
                         </div>
 
                         <!-- Image Preview -->
                         <div id="imagePreview" class="mb-3" style="display: none;">
-                            <label class="form-label">Xem tr??c</label>
+                            <label class="form-label">Xem trước</label>
                             <div class="border rounded p-2" style="background: #f8f9fa;">
                                 <img id="previewImg" src="" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
                             </div>
@@ -92,40 +92,50 @@
     </div>
 </div>
 
-<!-- CKEditor 5 -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+@section Scripts {
+    <!-- CKEditor 5 -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize CKEditor
-        ClassicEditor
-            .create(document.querySelector('#Content'), {
-                toolbar: {
-                    items: [
-                        'heading', '|', 'bold', 'italic', 'link', '|',
-                        'bulletedList', 'numberedList', 'blockQuote', '|',
-                        'insertTable', '|', 'undo', 'redo'
-                    ]
-                },
-                language: 'vi'
-            })
-            .catch(error => console.error(error));
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize CKEditor for all textareas with class 'editor'
+            const editors = document.querySelectorAll('.editor');
 
-        // Image Preview
-        const uploadInput = document.getElementById('uploadImage');
-        const imagePreview = document.getElementById('imagePreview');
-        const previewImg = document.getElementById('previewImg');
+            editors.forEach(editor => {
+                ClassicEditor
+                    .create(editor, {
+                        toolbar: {
+                            items: [
+                                'heading', '|', 'bold', 'italic', 'link', '|',
+                                'bulletedList', 'numberedList', 'blockQuote', '|',
+                                'insertTable', '|', 'undo', 'redo'
+                            ]
+                        },
+                        language: 'vi'
+                    })
+                    .catch(error => {
+                        console.error('CKEditor Error:', error);
+                    });
+            });
 
-        uploadInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    previewImg.src = event.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+            // Image Preview
+            const uploadInput = document.getElementById('uploadImage');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+
+            if (uploadInput) {
+                uploadInput.addEventListener('change', function (e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (event) {
+                            previewImg.src = event.target.result;
+                            imagePreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
             }
         });
-    });
-</script>
+    </script>
+}

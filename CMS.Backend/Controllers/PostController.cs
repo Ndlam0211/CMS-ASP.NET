@@ -74,31 +74,63 @@ namespace CMS.Backend.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (uploadImage != null && uploadImage.Length > 0)
+                try
                 {
-                    // 1. Định nghĩa đường dẫn lưu file: wwwroot/uploads
-                    string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-
-                    // Tạo thư mục nếu chưa tồn tại
-                    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-                    // 2. Tạo tên file duy nhất để không bị đè dữ liệu
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
-                    string filePath = Path.Combine(folder, fileName);
-
-                    // 3. Chép file vào thư mục
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (uploadImage != null && uploadImage.Length > 0)
                     {
-                        uploadImage.CopyTo(stream);
+                        // Validate file type
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
+
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("uploadImage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                            ViewData["Categories"] = _context.Categories.ToList();
+                            return View(post);
+                        }
+
+                        // Validate file size (Max 5MB)
+                        if (uploadImage.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("uploadImage", "Kích thước file không được vượt quá 5MB");
+                            ViewData["Categories"] = _context.Categories.ToList();
+                            return View(post);
+                        }
+
+                        // 1. Định nghĩa đường dẫn lưu file: wwwroot/uploads
+                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                        // Tạo thư mục nếu chưa tồn tại
+                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                        // 2. Tạo tên file duy nhất để không bị đè dữ liệu
+                        string fileName = Guid.NewGuid().ToString() + fileExtension;
+                        string filePath = Path.Combine(folder, fileName);
+
+                        // 3. Chép file vào thư mục
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            uploadImage.CopyTo(stream);
+                        }
+
+                        // 4. Lưu đường dẫn vào CSDL để sau này hiển thị
+                        post.ImageUrl = "/uploads/" + fileName;
                     }
 
-                    // 4. Lưu đường dẫn vào CSDL để sau này hiển thị
-                    post.ImageUrl = "/uploads/" + fileName;
-                }
+                    // Set default created date
+                    if (post.CreatedDate == default(DateTime))
+                    {
+                        post.CreatedDate = DateTime.Now;
+                    }
 
-                _context.Posts.Add(post);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                    _context.Posts.Add(post);
+                    _context.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
+                }
             }
 
             ViewData["Categories"] = _context.Categories.ToList();
@@ -130,13 +162,31 @@ namespace CMS.Backend.Controllers
                 {
                     if (uploadImage != null && uploadImage.Length > 0)
                     {
+                        // Validate file type
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
+
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("uploadImage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                            ViewData["Categories"] = _context.Categories.ToList();
+                            return View(post);
+                        }
+
+                        // Validate file size (Max 5MB)
+                        if (uploadImage.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("uploadImage", "Kích thước file không được vượt quá 5MB");
+                            ViewData["Categories"] = _context.Categories.ToList();
+                            return View(post);
+                        }
+
                         // Thực hiện quy trình upload giống như trang Create
                         string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
                         if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(uploadImage.FileName);
-
+                        string fileName = Guid.NewGuid().ToString() + fileExtension;
                         string filePath = Path.Combine(folder, fileName);
 
                         using (var stream = new FileStream(filePath, FileMode.Create))
@@ -167,6 +217,12 @@ namespace CMS.Backend.Controllers
                     if (!PostExists(post.Id))
                         return NotFound();
                     throw;
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
+                    ViewData["Categories"] = _context.Categories.ToList();
+                    return View(post);
                 }
                 return RedirectToAction(nameof(Index));
             }

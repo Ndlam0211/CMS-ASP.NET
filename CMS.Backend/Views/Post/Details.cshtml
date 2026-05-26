@@ -9,7 +9,7 @@
         <div class="col-lg-8 mx-auto">
             <!-- Back to List -->
             <div class="mb-4">
-                <a asp-action="Index" class="btn btn-secondary">
+                <a asp-action="Index" asp-route-id="@Model?.Category.Id" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Quay lại danh sách
                 </a>
             </div>

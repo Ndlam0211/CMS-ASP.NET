@@ -23,10 +23,23 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? id)
         {
+            var list = new List<Post>();
+            if(id == null)
+            {
+                list = _context.Posts
+                    .Include(p => p.Category) // Kết hợp với bảng Category để lấy tên danh mục
+                    .ToList();
+                return View(list);
+            }
+
             // Lấy dữ liệu THẬT từ bảng Posts trong SQL
-            var list = _context.Posts.ToList();
+             list = _context.Posts
+                .Where(p => p.CategoryId == id) // Lọc theo CategoryId
+                .OrderByDescending(p => p.CreatedDate) // Sắp xếp theo ngày tạo giảm dần
+                .Include(p => p.Category) // Kết hợp với bảng Category để lấy tên danh mục
+                .ToList();
 
             return View(list); // Gửi danh sách này sang giao diện
         }

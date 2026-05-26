@@ -24,7 +24,9 @@ namespace CMS.Backend.Controllers
         // GET: CategoryProduct/Index
         public IActionResult Index()
         {
-            var categoryProducts = _context.CategoriesProducts.ToList();
+            var categoryProducts = _context.CategoriesProducts
+                .Include(cp => cp.Products)
+                .ToList();
             return View(categoryProducts);
         }
 
@@ -102,7 +104,10 @@ namespace CMS.Backend.Controllers
         // GET: CategoryProduct/Delete/5
         public IActionResult Delete(int id)
         {
-            var categoryProduct = _context.CategoriesProducts.FirstOrDefault(cp => cp.Id == id);
+            var categoryProduct = _context.CategoriesProducts
+                .Include(cp => cp.Products)
+                .FirstOrDefault(cp => cp.Id == id);
+
             if (categoryProduct == null)
                 return NotFound();
 

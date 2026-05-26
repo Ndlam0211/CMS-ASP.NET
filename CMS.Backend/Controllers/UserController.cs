@@ -55,9 +55,19 @@ namespace CMS.Backend.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Kiểm tra xem tên đăng nhập đã tồn tại chưa
+                var checkExist = _context.Users.Any(u => u.Username == user.Username);
+                if (checkExist)
+                {
+                    ModelState.AddModelError("Username", "Tên đăng nhập này đã có người dùng!");
+                    return View(user);
+                }
+
+                // Lưu User mới vào Database
                 _context.Users.Add(user);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Index");
             }
 
             return View(user);

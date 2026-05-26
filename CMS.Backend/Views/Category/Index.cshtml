@@ -4,65 +4,73 @@
 	ViewData["Title"] = "Quản lý danh mục";
 }
 
-<div class="container my-5">
-	<div class="row mb-4">
-		<div class="col-12">
-			<div class="d-flex justify-content-between align-items-center">
-				<h1 class="display-4">Quản lý danh mục</h1>
-				<a asp-action="Create" class="btn btn-primary btn-lg">
-					<i class="bi bi-plus-circle"></i> Thêm danh mục
-				</a>
-			</div>
+<!-- Page Header -->
+<div class="mb-4">
+	<div class="d-flex justify-content-between align-items-center">
+		<div>
+			<h1 class="h3 mb-1">
+				<i class="bi bi-grid-3x2"></i> Quản lý danh mục
+			</h1>
+			<p class="text-muted mb-0">Quản lý danh mục bài viết của hệ thống</p>
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-12">
-			@if (Model != null && Model.Count() > 0)
-			{
-				<div class="table-responsive">
-					<table class="table table-hover table-striped">
-						<thead class="table-dark">
-							<tr>
-								<th>#</th>
-								<th>Tên danh mục</th>
-								<th>Mô tả</th>
-								<th>Hành động</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach (var category in Model)
-							{
-								<tr>
-									<td>@category.Id</td>
-									<td>
-										<strong>@category.Name</strong>
-									</td>
-									<td>@category.Description</td>
-									<td>
-										<a asp-action="Details" asp-route-id="@category.Id" class="btn btn-sm btn-info">
-											<i class="bi bi-eye"></i> Xem
-										</a>
-										<a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-warning">
-											<i class="bi bi-pencil-square"></i> Sửa
-										</a>
-										<a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-danger">
-											<i class="bi bi-trash"></i> Xóa
-										</a>
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-			}
-			else
-			{
-				<div class="alert alert-info" role="alert">
-					<h4 class="alert-heading">Không có danh mục</h4>
-					<p>Hiện tại chưa có danh mục nào trong hệ thống.</p>
-				</div>
-			}
-		</div>
+		<a asp-action="Create" class="btn btn-primary">
+			<i class="bi bi-plus-circle"></i> Thêm danh mục
+		</a>
 	</div>
 </div>
+
+<!-- Content Card -->
+<div class="card border-0 shadow-sm">
+	<div class="card-body">
+		@if (Model != null && Model.Count() > 0)
+		{
+			<div class="table-responsive">
+				<table class="table table-hover table-sm">
+					<thead>
+						<tr>
+							<th style="width: 5%;">#</th>
+							<th style="width: 25%;">Tên danh mục</th>
+							<th>Mô tả</th>
+							<th style="width: 20%;">Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var category in Model)
+						{
+							<tr>
+								<td>
+									<span class="badge bg-secondary">@category.Id</span>
+								</td>
+								<td>
+									<strong>@category.Name</strong>
+								</td>
+								<td>
+									<span class="text-muted">@(string.IsNullOrEmpty(category.Description) ? "..." : category.Description.Substring(0, Math.Min(50, category.Description.Length)) + (category.Description.Length > 50 ? "..." : ""))</span>
+								</td>
+								<td>
+									<div class="btn-group btn-group-sm" role="group">
+										<a asp-action="Details" asp-route-id="@category.Id" class="btn btn-outline-info" title="Xem chi tiết">
+											<i class="bi bi-eye"></i>
+										</a>
+										<a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-outline-warning" title="Chỉnh sửa">
+											<i class="bi bi-pencil-square"></i>
+										</a>
+										<a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-outline-danger" title="Xóa">
+											<i class="bi bi-trash"></i>
+										</a>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+		else
+		{
+							<div class="alert alert-info mb-0" role="alert">
+								<i class="bi bi-info-circle"></i> Không có danh mục nào trong hệ thống
+							</div>
+						}
+					</div>
+				</div>

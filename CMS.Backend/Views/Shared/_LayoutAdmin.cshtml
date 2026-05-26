@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LamCMS Admin</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="~/css/admin-layout.css" />
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="logo-section">
+                        <div class="logo-icon">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+                        <h3>LamCMS</h3>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- Notification -->
+                    <div class="notification-icon">
+                        <i class="bi bi-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+
+                    <!-- User Profile -->
+                    <div class="user-profile">
+                        <div class="user-avatar">ND</div>
+                        <div class="user-info">
+                            <span class="user-name">Nguyen Dinh Lam</span>
+                            <span class="user-role">Administrator</span>
+                        </div>
+                    </div>
+
+                    <!-- Logout Button -->
+                    <button class="logout-btn">
+                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- SIDEBAR -->
+            <aside class="sidebar" id="sidebar">
+                <div class="sidebar-brand">CMS Admin</div>
+
+                <ul class="sidebar-menu">
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Home" asp-action="Index" class="sidebar-link" id="nav-dashboard">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Bảng điều khiển</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Category" asp-action="Index" class="sidebar-link" id="nav-category">
+                            <i class="bi bi-grid-3x2"></i>
+                            <span>Danh mục bài viết</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Post" asp-action="Index" class="sidebar-link" id="nav-post">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Bài viết</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="User" asp-action="Index" class="sidebar-link" id="nav-user">
+                            <i class="bi bi-person-gear"></i>
+                            <span>Người dùng</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="CategoryProduct" asp-action="Index" class="sidebar-link" id="nav-categoryproduct">
+                            <i class="bi bi-tag"></i>
+                            <span>Danh mục sản phẩm</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Product" asp-action="Index" class="sidebar-link" id="nav-product">
+                            <i class="bi bi-box-seam"></i>
+                            <span>Sản phẩm</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Customer" asp-action="Index" class="sidebar-link" id="nav-customer">
+                            <i class="bi bi-people"></i>
+                            <span>Khách hàng</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item">
+                        <a asp-controller="Order" asp-action="Index" class="sidebar-link" id="nav-order">
+                            <i class="bi bi-cart-check"></i>
+                            <span>Đơn hàng</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-menu-item" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #374151;">
+                        <a href="#" class="sidebar-link" id="nav-settings">
+                            <i class="bi bi-gear"></i>
+                            <span>Cài đặt</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- CONTENT -->
+            <main class="content" id="content">
+                @RenderBody()
+            </main>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="admin-footer">
+            <p>&copy; 2026 - NguyenDinhLam - Cao Đẳng Công Thương TPHCM | LamCMS Admin</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Highlight active menu (compare first path segment to avoid substring collisions)
+            const currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '');
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+            function firstSegment(path) {
+                const parts = path.split('/').filter(Boolean);
+                return parts.length > 0 ? parts[0] : '';
+            }
+
+            const currentFirst = firstSegment(currentPath);
+
+            sidebarLinks.forEach(link => {
+                // resolve absolute pathname from link (handles relative URLs)
+                try {
+                    const linkHref = link.getAttribute('href') || link.href || '';
+                    const linkPath = new URL(linkHref, window.location.origin).pathname.toLowerCase().replace(/\/$/, '');
+                    const linkFirst = firstSegment(linkPath);
+
+                    // Match when the first path segment is equal (handles /category vs /categoryproduct correctly)
+                    if (linkFirst === currentFirst) {
+                        link.classList.add('active');
+                    } else if (linkPath === '' && (currentPath === '' || currentPath === '/')) {
+                        // special case: root/home
+                        link.classList.add('active');
+                    }
+                }
+                catch (e) {
+                    // fallback to strict equality if URL parsing fails
+                    const href = (link.getAttribute('href') || '').toLowerCase().replace(/\/$/, '');
+                    if (href === currentPath) link.classList.add('active');
+                }
+            });
+
+            // Sidebar toggle
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+
+            sidebarToggle?.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                sidebar.classList.toggle('show');
+                content.classList.toggle('expanded');
+            });
+
+            // Close sidebar on link click (mobile)
+            if (window.innerWidth <= 768) {
+                sidebarLinks.forEach(link => {
+                    link.addEventListener('click', function () {
+                        sidebar.classList.remove('show');
+                    });
+                });
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

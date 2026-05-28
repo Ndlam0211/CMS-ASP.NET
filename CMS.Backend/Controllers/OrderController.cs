@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Sinh vien: Nguyen Dinh Lam
  * MSSV: 2122110509
  * Ngay tao: 21-05-2026
@@ -7,11 +7,13 @@
 
 using CMS.Data;
 using CMS.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize] // Bắt buộc phải đăng nhập mới được vào các hàm bên dưới
     public class OrderController : Controller
     {
         private readonly ApplicationDbContext _context;

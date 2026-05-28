@@ -8,10 +8,12 @@
 using CMS.Data;// Kết nối tới lớp dữ liệu bạn vừa tạo
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize] // Bắt buộc phải đăng nhập mới được vào các hàm bên dưới
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

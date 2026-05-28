@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,11 @@ namespace CMS.Data.Entities
     {
         public int Id { get; set; }
 
+        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         public string Username { get; set; } // username
 
+
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
         public string PasswordHash { get; set; } // Mật khẩu đã được mã hóa
         
         public string FullName { get; set; } // Họ và tên

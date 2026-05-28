@@ -39,18 +39,21 @@
                     </div>
 
                     <!-- User Profile -->
-                    <div class="user-profile">
-                        <div class="user-avatar">ND</div>
-                        <div class="user-info">
-                            <span class="user-name">Nguyen Dinh Lam</span>
-                            <span class="user-role">Administrator</span>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="user-profile">
+                            <div class="user-avatar">@User.FindFirst("FullName")?.Value[0]</div>
+                            <div class="user-info">
+                                <span class="user-name">@User.FindFirst("FullName")?.Value</span>
+                                <span class="user-role">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Logout Button -->
-                    <button class="logout-btn">
-                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
-                    </button>
+                        <!-- Logout Button -->
+                        <a asp-controller="Account" asp-action="Logout" class="logout-btn">
+                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                        </a>
+                    }
                 </div>
             </div>
         </header>

@@ -4,15 +4,15 @@
  * Ngay tao: 14-05-2026
  * Version: 1.0
  */
-
 using CMS.Data;
 using CMS.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize(Roles ="Admin")] // Bắt buộc phải đăng nhập và có role = Admin mới được vào các hàm bên dưới
     public class UserController : Controller
     {
 

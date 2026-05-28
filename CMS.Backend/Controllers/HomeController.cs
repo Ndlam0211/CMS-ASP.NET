@@ -3,9 +3,11 @@ using CMS.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize] // Bắt buộc phải đăng nhập mới được vào các hàm bên dưới
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _context;

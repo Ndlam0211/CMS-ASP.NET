@@ -7,12 +7,14 @@
 
 using CMS.Data;
 using CMS.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace CMS.Backend.Controllers
 {
+    [Authorize] // Bắt buộc phải đăng nhập mới được vào các hàm bên dưới
     public class PostController : Controller
     {
 

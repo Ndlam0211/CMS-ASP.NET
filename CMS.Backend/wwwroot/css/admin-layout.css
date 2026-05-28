@@ -134,6 +134,7 @@ body {
 }
 
 .logout-btn {
+    text-decoration: none;
     padding: 0.5rem 1rem;
     background: #ef4444;
     color: white;
@@ -144,9 +145,9 @@ body {
     transition: background 0.3s;
 }
 
-.logout-btn:hover {
-    background: #dc2626;
-}
+    .logout-btn:hover {
+        background: #dc2626;
+    }
 
 /* ============ SIDEBAR ============ */
 .admin-container {

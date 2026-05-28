@@ -42,6 +42,13 @@ namespace CMS.Data
 
         public DbSet<OrderDetail> OrderDetails { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Order>()
+                .Property(o => o.OrderDate)
+                .HasDefaultValueSql("GETDATE()"); // SQL Server: use GETDATE()
+        }
     }
 }

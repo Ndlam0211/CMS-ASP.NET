@@ -25,6 +25,8 @@ namespace CMS.Data.Entities
 
         public string? Notes { get; set; }
 
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+
         public int CustomerId { get; set; } // Khóa ngoại liên kết tới Customer
 
         [ForeignKey("CustomerId")]

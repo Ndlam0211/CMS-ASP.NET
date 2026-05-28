@@ -7,6 +7,7 @@
 
 using CMS.Data;
 using CMS.Data.Entities;
+using CMS.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,25 +27,49 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index(int? id)
+        public IActionResult Index(int? categoryId, int page = 1, int pageSize = 10)
         {
-            var list = new List<Post>();
-            if(id == null)
+            // Kiểm tra tham số hợp lệ
+            if (page < 1) page = 1;
+            if (pageSize < 5) pageSize = 5;
+            if (pageSize > 50) pageSize = 50;
+
+            IQueryable<Post> query = _context.Posts.Include(p => p.Category);
+
+            // Lọc theo danh mục nếu có
+            if (categoryId.HasValue && categoryId.Value > 0)
             {
-                list = _context.Posts
-                    .Include(p => p.Category) // Kết hợp với bảng Category để lấy tên danh mục
-                    .ToList();
-                return View(list);
+                query = query.Where(p => p.CategoryId == categoryId.Value);
             }
 
-            // Lấy dữ liệu THẬT từ bảng Posts trong SQL
-             list = _context.Posts
-                .Where(p => p.CategoryId == id) // Lọc theo CategoryId
-                .OrderByDescending(p => p.CreatedDate) // Sắp xếp theo ngày tạo giảm dần
-                .Include(p => p.Category) // Kết hợp với bảng Category để lấy tên danh mục
+            // Sắp xếp theo ngày tạo giảm dần
+            query = query.OrderByDescending(p => p.CreatedDate);
+
+            // Lấy tổng số bài viết
+            int totalItems = query.Count();
+
+            // Lấy dữ liệu theo trang
+            var posts = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
-            return View(list); // Gửi danh sách này sang giao diện
+            // Tạo PaginatedList
+            var paginatedList = new PaginatedList<Post>(
+                posts,
+                totalItems,
+                page,
+                pageSize
+            );
+
+            // Lưu thông tin vào ViewBag
+            ViewBag.PageSize = pageSize;
+            ViewBag.SelectedCategoryId = categoryId;
+
+            // Load danh sách categories cho dropdown filter
+            ViewBag.Categories = _context.Categories.OrderBy(c => c.Name).ToList();
+
+            return View(paginatedList);
         }
 
         // Hàm Details: Hiển thị chi tiết một bài viết

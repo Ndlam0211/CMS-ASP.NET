@@ -7,6 +7,7 @@
 
 using CMS.Data;// Kết nối tới lớp dữ liệu bạn vừa tạo
 using CMS.Data.Entities;
+using CMS.Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,35 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            // Lấy dữ liệu THẬT từ bảng Categories trong SQL
-            var data = _context.Categories.ToList();
+            // Kiểm tra tham số hợp lệ
+            if (page < 1) page = 1;
+            if (pageSize < 5) pageSize = 5;
+            if (pageSize > 50) pageSize = 50;
 
-            return View(data);
+            // Lấy tổng số danh mục
+            int totalItems = _context.Categories.Count();
+
+            // Lấy danh sách danh mục theo trang
+            var categories = _context.Categories
+                .OrderBy(c => c.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Tạo PaginatedList
+            var paginatedList = new PaginatedList<Category>(
+                categories,
+                totalItems,
+                page,
+                pageSize
+            );
+
+            // Lưu pageSize vào ViewBag để dùng trong View
+            ViewBag.PageSize = pageSize;
+
+            return View(paginatedList);
         }
 
         // GET: Category/Details/5

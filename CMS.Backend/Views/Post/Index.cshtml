@@ -1,4 +1,5 @@
-﻿@using CMS.Data.Entities
+﻿@model CMS.Backend.Models.PaginatedList<CMS.Data.Entities.Post>
+@using CMS.Data.Entities
 @using System.Linq
 
 @{
@@ -22,8 +23,70 @@
 
 <!-- Content Card -->
 <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom">
+        <div class="row align-items-center g-3">
+            <div class="col-auto">
+                <span class="text-muted small">
+                    Showing <strong>@Model.StartIndex</strong> to <strong>@Model.EndIndex</strong> of <strong>@Model.TotalItems</strong> entries
+                </span>
+            </div>
+            <div class="col-auto ms-auto">
+                <div class="d-flex gap-2 align-items-center">
+                    <!-- Filter Category Dropdown -->
+                    <div>
+                        <label class="form-label mb-0 me-2" style="display: inline-block;">Danh mục:</label>
+                        <select class="form-select" style="width: 200px; display: inline-block;" onchange="filterByCategory(this.value)">
+                            <option value="">Tất cả danh mục</option>
+                            @{
+                                var categories = ViewBag.Categories as List<CMS.Data.Entities.Category>;
+                                int? selectedCategoryId = ViewBag.SelectedCategoryId;
+                            }
+                            @if (categories != null && categories.Count > 0)
+                            {
+                                @foreach (var category in categories)
+                                {
+                                    if (selectedCategoryId == category.Id)
+                                    {
+                                        <option value="@category.Id" selected>@category.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@category.Id">@category.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Page Size Dropdown -->
+                    <div>
+                        <label class="form-label mb-0 me-2" style="display: inline-block;">Hiển thị:</label>
+                        <select class="form-select" style="width: auto; display: inline-block;" onchange="changePageSize(this.value)">
+                            @{
+                                int currentSize = (int)ViewBag.PageSize;
+                                int[] pageSizes = { 5, 10, 20, 50 };
+                            }
+                            @foreach (var size in pageSizes)
+                            {
+                                if (currentSize == size)
+                                {
+                                    <option value="@size" selected>@size</option>
+                                }
+                                else
+                                {
+                                    <option value="@size">@size</option>
+                                }
+                            }
+                        </select>
+                        <span class="ms-2 text-muted small">entries</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="card-body">
-        @if (Model != null && Model.Count > 0)
+        @if (Model != null && Model.Items.Count > 0)
         {
             <div class="table-responsive">
                 <table class="table table-hover table-sm">
@@ -36,7 +99,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var post in Model)
+                        @foreach (var post in Model.Items)
                         {
                             <tr>
                                 <td>
@@ -73,6 +136,98 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination Controls -->
+            <nav class="mt-4" aria-label="Table pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    <!-- Previous Button -->
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-page="@(Model.CurrentPage - 1)" asp-route-pageSize="@ViewBag.PageSize">
+                                <i class="bi bi-chevron-left"></i> Trước
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <i class="bi bi-chevron-left"></i> Trước
+                            </span>
+                        </li>
+                    }
+
+                    <!-- Page Numbers -->
+                    @{
+                        int startPage = Math.Max(1, Model.CurrentPage - 2);
+                        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-page="1" asp-route-pageSize="@ViewBag.PageSize">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    @i
+                                    <span class="visually-hidden">(current)</span>
+                                </span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-page="@i" asp-route-pageSize="@ViewBag.PageSize">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-page="@Model.TotalPages" asp-route-pageSize="@ViewBag.PageSize">@Model.TotalPages</a>
+                        </li>
+                    }
+
+                    <!-- Next Button -->
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-categoryId="@ViewBag.SelectedCategoryId" asp-route-page="@(Model.CurrentPage + 1)" asp-route-pageSize="@ViewBag.PageSize">
+                                Sau <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                Sau <i class="bi bi-chevron-right"></i>
+                            </span>
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
         else
         {
@@ -82,3 +237,26 @@
         }
     </div>
 </div>
+
+<script>
+    function changePageSize(pageSize) {
+        const categoryId = '@ViewBag.SelectedCategoryId';
+        const baseUrl = '@Url.Action("Index")';
+        let url = baseUrl + '?page=1&pageSize=' + pageSize;
+        if (categoryId && categoryId !== '' && categoryId !== '0') {
+            url = baseUrl + '?categoryId=' + categoryId + '&page=1&pageSize=' + pageSize;
+        }
+        window.location.href = url;
+    }
+
+    function filterByCategory(categoryId) {
+        const pageSize = '@ViewBag.PageSize';
+        const baseUrl = '@Url.Action("Index")';
+        if (categoryId && categoryId !== '' && categoryId !== '0') {
+            window.location.href = baseUrl + '?categoryId=' + categoryId + '&page=1&pageSize=' + pageSize;
+        } else {
+            // show all
+            window.location.href = baseUrl + '?page=1&pageSize=' + pageSize;
+        }
+    }
+</script>

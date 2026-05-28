@@ -9,6 +9,7 @@ using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace CMS.Backend.Controllers
 {
@@ -72,64 +73,71 @@ namespace CMS.Backend.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId")] Post post, IFormFile uploadImage)
         {
- 
-                try
+            try
+            {
+                // Bắt buộc phải có ảnh khi tạo mới
+                if (uploadImage == null || uploadImage.Length == 0)
                 {
-                    if (uploadImage != null && uploadImage.Length > 0)
-                    {
-                        // Validate file type
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                        var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
+                    ModelState.AddModelError("ImageUrl", "Hình ảnh bài viết không được để trống");
+                    ViewData["Categories"] = _context.Categories.ToList();
+                    return View(post);
+                }
 
-                        if (!allowedExtensions.Contains(fileExtension))
-                        {
-                            ModelState.AddModelError("ImageUrl", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
-                            ViewData["Categories"] = _context.Categories.ToList();
-                            return View(post);
-                        }
+                // Validate file type
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
 
-                        // Validate file size (Max 5MB)
-                        if (uploadImage.Length > 5 * 1024 * 1024)
-                        {
-                            ModelState.AddModelError("ImageUrl", "Kích thước file không được vượt quá 5MB");
-                            ViewData["Categories"] = _context.Categories.ToList();
-                            return View(post);
-                        }
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    ModelState.AddModelError("ImageUrl", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                    ViewData["Categories"] = _context.Categories.ToList();
+                    return View(post);
+                }
 
-                        // 1. Định nghĩa đường dẫn lưu file: wwwroot/uploads
-                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                // Validate file size (Max 5MB)
+                if (uploadImage.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("ImageUrl", "Kích thước file không được vượt quá 5MB");
+                    ViewData["Categories"] = _context.Categories.ToList();
+                    return View(post);
+                }
 
-                        // Tạo thư mục nếu chưa tồn tại
-                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                // 1. Định nghĩa đường dẫn lưu file: wwwroot/uploads
+                string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-                        // 2. Tạo tên file duy nhất để không bị đè dữ liệu
-                        string fileName = Guid.NewGuid().ToString() + fileExtension;
-                        string filePath = Path.Combine(folder, fileName);
+                // Tạo thư mục nếu chưa tồn tại
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
 
-                        // 3. Chép file vào thư mục
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            uploadImage.CopyTo(stream);
-                        }
+                // 2. Tạo tên file duy nhất để không bị đè dữ liệu
+                string fileName = Guid.NewGuid().ToString() + fileExtension;
+                string filePath = Path.Combine(folder, fileName);
 
-                        // 4. Lưu đường dẫn vào CSDL để sau này hiển thị
-                        post.ImageUrl = "/uploads/" + fileName;
-                    }
+                // 3. Chép file vào thư mục
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    uploadImage.CopyTo(stream);
+                }
 
-                    // Set default created date
-                    if (post.CreatedDate == default(DateTime))
-                    {
-                        post.CreatedDate = DateTime.Now;
-                    }
+                // 4. Lưu đường dẫn vào CSDL để sau này hiển thị
+                post.ImageUrl = "/uploads/" + fileName;
 
+                // Set default created date
+                if (post.CreatedDate == default(DateTime))
+                {
+                    post.CreatedDate = DateTime.Now;
+                }
+
+                if (ModelState.IsValid)
+                {
                     _context.Posts.Add(post);
                     _context.SaveChanges();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
+            }
 
             ViewData["Categories"] = _context.Categories.ToList();
             return View(post);
@@ -149,79 +157,82 @@ namespace CMS.Backend.Controllers
         // POST: Post/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Title,Content,ImageUrl,CreatedDate,CategoryId")] Post post, IFormFile uploadImage)
+        public IActionResult Edit(int id, [Bind("Id,Title,Content,ImageUrl,CreatedDate,CategoryId")] Post post, IFormFile? uploadImage)
         {
             if (id != post.Id)
                 return NotFound();
 
-          
-                try
+            try
+            {
+                // Xử lý upload ảnh nếu có
+                if (uploadImage != null && uploadImage.Length > 0)
                 {
-                    if (uploadImage != null && uploadImage.Length > 0)
+                    // Validate file type
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(fileExtension))
                     {
-                        // Validate file type
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                        var fileExtension = Path.GetExtension(uploadImage.FileName).ToLower();
-
-                        if (!allowedExtensions.Contains(fileExtension))
-                        {
-                            ModelState.AddModelError("uploadImage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
-                            ViewData["Categories"] = _context.Categories.ToList();
-                            return View(post);
-                        }
-
-                        // Validate file size (Max 5MB)
-                        if (uploadImage.Length > 5 * 1024 * 1024)
-                        {
-                            ModelState.AddModelError("uploadImage", "Kích thước file không được vượt quá 5MB");
-                            ViewData["Categories"] = _context.Categories.ToList();
-                            return View(post);
-                        }
-
-                        // Thực hiện quy trình upload giống như trang Create
-                        string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-
-                        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-
-                        string fileName = Guid.NewGuid().ToString() + fileExtension;
-                        string filePath = Path.Combine(folder, fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            uploadImage.CopyTo(stream);
-                        }
-
-                        // Cập nhật đường dẫn ảnh mới vào model
-                        post.ImageUrl = "/uploads/" + fileName;
-                    }
-                    else
-                    {
-                        // Bước quan trọng: Nếu không upload ảnh mới, chúng ta phải giữ lại ảnh cũ
-                        // Chúng ta cần lấy lại giá trị ImageUrl từ Database để tránh bị ghi đè thành rỗng
-                        var oldPost = _context.Posts.AsNoTracking().FirstOrDefault(p => p.Id == post.Id);
-
-                        if (oldPost != null && string.IsNullOrEmpty(post.ImageUrl))
-                        {
-                            post.ImageUrl = oldPost.ImageUrl;
-                        }
+                        ModelState.AddModelError("ImageUrl", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                        ViewData["Categories"] = _context.Categories.ToList();
+                        return View(post);
                     }
 
+                    // Validate file size (Max 5MB)
+                    if (uploadImage.Length > 5 * 1024 * 1024)
+                    {
+                        ModelState.AddModelError("ImageUrl", "Kích thước file không được vượt quá 5MB");
+                        ViewData["Categories"] = _context.Categories.ToList();
+                        return View(post);
+                    }
+
+                    // Thực hiện quy trình upload
+                    string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                    if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+
+                    string fileName = Guid.NewGuid().ToString() + fileExtension;
+                    string filePath = Path.Combine(folder, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        uploadImage.CopyTo(stream);
+                    }
+
+                    // Cập nhật đường dẫn ảnh mới
+                    post.ImageUrl = "/uploads/" + fileName;
+                }
+                else
+                {
+                    // Lấy bài viết cũ từ database
+                    var oldPost = _context.Posts.AsNoTracking().FirstOrDefault(p => p.Id == post.Id);
+                    if (oldPost == null)
+                        return NotFound();
+                    // Nếu không upload ảnh mới, giữ lại ảnh cũ
+                    post.ImageUrl = oldPost.ImageUrl;
+                }
+
+                // Kiểm tra ModelState và cập nhật
+                if (ModelState.IsValid)
+                {
                     _context.Posts.Update(post);
                     _context.SaveChanges();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PostExists(post.Id))
-                        return NotFound();
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
-                    ViewData["Categories"] = _context.Categories.ToList();
-                    return View(post);
-                }
-                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PostExists(post.Id))
+                    return NotFound();
+                throw;
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
+            }
+
+            ViewData["Categories"] = _context.Categories.ToList();
+            return View(post);
         }
 
         // GET: Post/Delete/5

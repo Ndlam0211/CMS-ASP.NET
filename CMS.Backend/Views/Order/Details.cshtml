@@ -74,13 +74,13 @@
                                             <tr>
                                                 <td>@item.Product?.Name</td>
                                                 <td>@item.Quantity</td>
-                                                <td>@item.UnitPrice.ToString("N0") ?</td>
+                                                <td>@item.UnitPrice.ToString("N0") đ</td>
                                                 <td>
                                                     @{
                                                         decimal itemTotal = item.UnitPrice * item.Quantity;
                                                         total += itemTotal;
                                                     }
-                                                    @itemTotal.ToString("N0") ?
+                                                    @itemTotal.ToString("N0") đ
                                                 </td>
                                             </tr>
                                         }
@@ -91,7 +91,7 @@
                                                 <strong>Tổng cộng:</strong>
                                             </td>
                                             <td>
-                                                <strong>@total.ToString("N0") ?</strong>
+                                                <strong>@total.ToString("N0") đ</strong>
                                             </td>
                                         </tr>
                                     </tfoot>

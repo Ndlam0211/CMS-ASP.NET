@@ -78,6 +78,7 @@
                             <label class="form-label">Thay đổi hình ảnh</label>
                             <input type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
                             <small class="text-muted">Để trống nếu không muốn thay đổi</small>
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
                         </div>
 
                         <!-- Image Preview -->

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Sinh vien: Nguyen Dinh Lam
  * MSSV: 2122110509
  * Ngay tao: 21-05-2026
@@ -55,8 +55,16 @@ namespace CMS.Backend.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile uploadImage)
+        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile? uploadImage)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -67,14 +75,14 @@ namespace CMS.Backend.Controllers
                         var extension = Path.GetExtension(uploadImage.FileName).ToLower();
                         if (!allowedExtensions.Contains(extension))
                         {
-                            ModelState.AddModelError("uploadImage", "Ch? ch?p nh?n file ?nh (JPG, PNG, GIF)");
+                            ModelState.AddModelError("uploadImage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
                             ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
                             return View(product);
                         }
 
                         if (uploadImage.Length > 5 * 1024 * 1024)
                         {
-                            ModelState.AddModelError("uploadImage", "K�ch th??c file kh�ng ???c v??t qu� 5MB");
+                            ModelState.AddModelError("uploadImage", "Kích thước file không được vượt quá 5MB");
                             ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
                             return View(product);
                         }
@@ -96,7 +104,7 @@ namespace CMS.Backend.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "C� l?i khi l?u ?nh: " + ex.Message);
+                    ModelState.AddModelError("ImageUrl", "Có lỗi khi lưu ảnh: " + ex.Message);
                 }
             }
 
@@ -118,7 +126,7 @@ namespace CMS.Backend.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile uploadImage)
+        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile? uploadImage)
         {
             if (id != product.Id)
                 return NotFound();
@@ -140,7 +148,7 @@ namespace CMS.Backend.Controllers
 
                         if (uploadImage.Length > 5 * 1024 * 1024)
                         {
-                            ModelState.AddModelError("uploadImage", "K�ch th??c file kh�ng ???c v??t qu� 5MB");
+                            ModelState.AddModelError("uploadImage", "Kích th??c file không ???c v??t quá 5MB");
                             ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
                             return View(product);
                         }

@@ -61,9 +61,9 @@
 
                         <!-- Image Upload -->
                         <div class="mb-3">
-                            <label asp-for="ImageUrl" class="form-label">Hình ảnh đại diện</label>
+                            <label asp-for="ImageUrl" class="form-label">Hình ảnh đại diện <span class="text-danger">*</span></label>
                             <input asp-for="ImageUrl" type="file" name="uploadImage" id="uploadImage" class="form-control" accept="image/*" />
-                            <small class="text-muted">Định dạng: JPG, PNG, GIF (Max 5MB)</small>
+                            <small class="text-muted">Định dạng: JPG, PNG, GIF (Max 5MB)</small><br/>
                             <span asp-validation-for="ImageUrl" class="text-danger small"></span>
                         </div>
 

@@ -72,8 +72,7 @@ namespace CMS.Backend.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Title,Content,ImageUrl,CategoryId")] Post post, IFormFile uploadImage)
         {
-            if (ModelState.IsValid)
-            {
+ 
                 try
                 {
                     if (uploadImage != null && uploadImage.Length > 0)
@@ -84,7 +83,7 @@ namespace CMS.Backend.Controllers
 
                         if (!allowedExtensions.Contains(fileExtension))
                         {
-                            ModelState.AddModelError("uploadImage", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
+                            ModelState.AddModelError("ImageUrl", "Chỉ chấp nhận file ảnh (JPG, PNG, GIF)");
                             ViewData["Categories"] = _context.Categories.ToList();
                             return View(post);
                         }
@@ -92,7 +91,7 @@ namespace CMS.Backend.Controllers
                         // Validate file size (Max 5MB)
                         if (uploadImage.Length > 5 * 1024 * 1024)
                         {
-                            ModelState.AddModelError("uploadImage", "Kích thước file không được vượt quá 5MB");
+                            ModelState.AddModelError("ImageUrl", "Kích thước file không được vượt quá 5MB");
                             ViewData["Categories"] = _context.Categories.ToList();
                             return View(post);
                         }
@@ -131,7 +130,6 @@ namespace CMS.Backend.Controllers
                 {
                     ModelState.AddModelError("", "Có lỗi xảy ra: " + ex.Message);
                 }
-            }
 
             ViewData["Categories"] = _context.Categories.ToList();
             return View(post);
@@ -156,8 +154,7 @@ namespace CMS.Backend.Controllers
             if (id != post.Id)
                 return NotFound();
 
-            if (ModelState.IsValid)
-            {
+          
                 try
                 {
                     if (uploadImage != null && uploadImage.Length > 0)
@@ -225,10 +222,6 @@ namespace CMS.Backend.Controllers
                     return View(post);
                 }
                 return RedirectToAction(nameof(Index));
-            }
-
-            ViewData["Categories"] = _context.Categories.ToList();
-            return View(post);
         }
 
         // GET: Post/Delete/5

@@ -6,6 +6,7 @@
  */
 using CMS.Data;
 using CMS.Data.Entities;
+using CMS.Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,12 +25,35 @@ namespace CMS.Backend.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
-            // Lấy dữ liệu THẬT từ bảng Users trong SQL
-            var users = _context.Users.ToList();
+            // Kiểm tra tham số hợp lệ
+            if (page < 1) page = 1;
+            if (pageSize < 5) pageSize = 5;
+            if (pageSize > 100) pageSize = 100;
 
-            return View(users);
+            // Lấy tổng số người dùng
+            int totalItems = _context.Users.Count();
+
+            // Lấy danh sách người dùng theo trang
+            var users = _context.Users
+                .OrderBy(u => u.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Tạo PaginatedList
+            var paginatedList = new PaginatedList<User>(
+                users,
+                totalItems,
+                page,
+                pageSize
+            );
+
+            // Lưu pageSize vào ViewBag để dùng trong View
+            ViewBag.PageSize = pageSize;
+
+            return View(paginatedList);
         }
 
         // GET: User/Details/5

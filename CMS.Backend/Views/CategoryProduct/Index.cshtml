@@ -1,80 +1,207 @@
-@using CMS.Data.Entities
+@model CMS.Backend.Models.PaginatedList<CMS.Data.Entities.CategoryProduct>
 
 @{
     ViewData["Title"] = "Quản lý danh mục sản phẩm";
 }
 
-<div class="container my-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="display-4">Quản lý danh mục sản phẩm</h1>
-                <a asp-action="Create" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-circle"></i> Thêm danh mục
-                </a>
-            </div>
+<!-- Page Header -->
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-1">
+                <i class="bi bi-tag"></i> Quản lý danh mục sản phẩm
+            </h1>
+            <p class="text-muted mb-0">Quản lý danh mục sản phẩm của hệ thống</p>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            @if (Model != null && Model.Count > 0)
-            {
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Tên danh mục</th>
-                                <th>Mô tả</th>
-                                <th>Số sản phẩm</th>
-                                <th>Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var category in Model)
-                            {
-                                <tr>
-                                    <td>@category.Id</td>
-                                    <td>
-                                        <strong>@category.Name</strong>
-                                    </td>
-                                    <td>@category.Description</td>
-                                    <td>
-                                        <span class="badge bg-secondary">@(category.Products?.Count ?? 0)</span>
-                                    </td>
-                                    <td>
-                                        <a asp-action="Details" asp-route-id="@category.Id" class="btn btn-sm btn-info">
-                                            <i class="bi bi-eye"></i> Xem
-                                        </a>
-                                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil"></i> Sửa
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> Xóa
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <p class="text-muted">
-                            Tổng cộng: <strong>@Model.Count</strong> danh mục
-                        </p>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="alert alert-warning" role="alert">
-                    <h4 class="alert-heading">Không có dữ liệu</h4>
-                    <p>Hiện tại không có danh mục sản phẩm nào trong hệ thống.</p>
-                </div>
-            }
-        </div>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm danh mục
+        </a>
     </div>
 </div>
+
+<!-- Content Card -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <span class="text-muted small">
+                Showing <strong>@Model.StartIndex</strong> to <strong>@Model.EndIndex</strong> of <strong>@Model.TotalItems</strong> categories
+            </span>
+        </div>
+        <div>
+            <label class="me-2" style="display: inline-block;">Hiển thị:</label>
+            <select class="form-select" style="width: auto; display: inline-block;" onchange="changePageSize(this.value)">
+                @{
+                    int currentSize = (int)ViewBag.PageSize;
+                    int[] pageSizes = { 5, 10, 20, 50, 100 };
+                }
+                @foreach (var size in pageSizes)
+                {
+                    if (currentSize == size)
+                    {
+                        <option value="@size" selected>@size</option>
+                    }
+                    else
+                    {
+                        <option value="@size">@size</option>
+                    }
+                }
+            </select>
+            <span class="ms-2 text-muted small">categories</span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        @if (Model != null && Model.Items.Count > 0)
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 30%;">Tên danh mục</th>
+                            <th>Mô tả</th>
+                            <th style="width: 10%;">Sản phẩm</th>
+                            <th style="width: 15%;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary">@category.Id</span>
+                                </td>
+                                <td>
+                                    <strong>@category.Name</strong>
+                                </td>
+                                <td>
+                                    <span class="text-muted">@(string.IsNullOrEmpty(category.Description) ? "..." : category.Description.Substring(0, Math.Min(50, category.Description.Length)) + (category.Description.Length > 50 ? "..." : ""))</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@(category.Products?.Count ?? 0)</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a asp-action="Details" asp-route-id="@category.Id" class="btn btn-outline-info" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-outline-warning" title="Chỉnh sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@category.Id" class="btn btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination Controls -->
+            <nav class="mt-4" aria-label="Table pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    <!-- Previous Button -->
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)" asp-route-pageSize="@ViewBag.PageSize">
+                                <i class="bi bi-chevron-left"></i> Trước
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                <i class="bi bi-chevron-left"></i> Trước
+                            </span>
+                        </li>
+                    }
+
+                    <!-- Page Numbers -->
+                    @{
+                        int startPage = Math.Max(1, Model.CurrentPage - 2);
+                        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-pageSize="@ViewBag.PageSize">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    @i
+                                    <span class="visually-hidden">(current)</span>
+                                </span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@ViewBag.PageSize">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages" asp-route-pageSize="@ViewBag.PageSize">@Model.TotalPages</a>
+                        </li>
+                    }
+
+                    <!-- Next Button -->
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)" asp-route-pageSize="@ViewBag.PageSize">
+                                Sau <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link">
+                                Sau <i class="bi bi-chevron-right"></i>
+                            </span>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0" role="alert">
+                <i class="bi bi-info-circle"></i> Không có danh mục sản phẩm nào trong hệ thống
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function changePageSize(pageSize) {
+        window.location.href = '@Url.Action("Index")' + '?page=1&pageSize=' + pageSize;
+    }
+</script>

@@ -5,6 +5,7 @@
  * Version: 1.0
  */
 
+using CMS.Backend.Models;
 using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -24,12 +25,24 @@ namespace CMS.Backend.Controllers
         }
 
         // GET: CategoryProduct/Index
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10)
         {
+            // Kiểm tra tham số hợp lệ
+            if (page < 1) page = 1;
+            if (pageSize < 5) pageSize = 5;
+            if (pageSize > 100) pageSize = 100;
+
+            int totalItems = _context.CategoriesProducts.Count();
             var categoryProducts = _context.CategoriesProducts
                 .Include(cp => cp.Products)
+                .OrderBy(cp => cp.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
-            return View(categoryProducts);
+
+            var paginatedList = new PaginatedList<CategoryProduct>(categoryProducts, totalItems, page, pageSize);
+            ViewBag.PageSize = pageSize;
+            return View(paginatedList);
         }
 
         // GET: CategoryProduct/Details/5

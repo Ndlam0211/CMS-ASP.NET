@@ -5,6 +5,7 @@
  * Version: 1.0
  */
 
+using CMS.Backend.Models;
 using CMS.Data;
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -24,10 +25,55 @@ namespace CMS.Backend.Controllers
         }
 
         // GET: Product/Index
-        public IActionResult Index()
+        public IActionResult Index(int page = 1, int pageSize = 10, int? categoryProductId = null, string? sortPrice = null)
         {
-            var products = _context.Products.Include(p => p.CategoryProduct).ToList();
-            return View(products);
+            // Kiểm tra tham số hợp lệ
+            if (page < 1) page = 1;
+            if (pageSize < 5) pageSize = 5;
+            if (pageSize > 100) pageSize = 100;
+
+            var query = _context.Products
+                .Include(p => p.CategoryProduct)
+                .AsQueryable();
+
+            // Filter by Category
+            if (categoryProductId.HasValue && categoryProductId > 0)
+            {
+                query = query.Where(p => p.CategoryProductId == categoryProductId.Value);
+            }
+
+            // Sort by Price
+            if (sortPrice == "asc")
+            {
+                query = query.OrderBy(p => p.Price);
+            }
+            else if (sortPrice == "desc")
+            {
+                query = query.OrderByDescending(p => p.Price);
+            }
+            else
+            {
+                query = query.OrderBy(p => p.Id);
+            }
+
+            // Calculate total items before pagination
+            int totalItems = query.Count();
+
+            // Pagination
+            var products = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var paginatedList = new PaginatedList<Product>(products, totalItems, page, pageSize);
+
+            // Pass data to view
+            ViewBag.PageSize = pageSize;
+            ViewBag.CategoryProducts = _context.CategoriesProducts.ToList();
+            ViewBag.SelectedCategoryId = categoryProductId;
+            ViewBag.SelectedSortPrice = sortPrice;
+
+            return View(paginatedList);
         }
 
         // GET: Product/Details/5

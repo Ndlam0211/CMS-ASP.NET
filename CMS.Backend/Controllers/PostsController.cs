@@ -2,7 +2,7 @@
  * Sinh vien: Nguyen Dinh Lam
  * MSSV: 2122110509
  * Ngay tao: 28-05-2026
- * Version: 1.0
+ * Version: 1.1 (Cập nhật đồng bộ Frontend)
  */
 
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +39,7 @@ namespace CMS.Backend.Controllers
                     p.Title,
                     p.ImageUrl,
                     p.CreatedDate,
-                    CategoryName = p.Category.Name // Kéo trực tiếp tên chuyên mục thay vì chỉ lấy mã ID cộc lốc 
+                    CategoryName = p.Category != null ? p.Category.Name : "General" // Kéo trực tiếp tên chuyên mục thay vì chỉ lấy mã ID cộc lốc 
                 })
                 .ToListAsync();
 
@@ -59,7 +59,8 @@ namespace CMS.Backend.Controllers
                     p.Id,
                     p.Title,
                     p.ImageUrl,
-                    p.CreatedDate
+                    p.CreatedDate,
+                    CategoryName = p.Category != null ? p.Category.Name : "General"
                 })
                 .ToListAsync();
 
@@ -67,12 +68,23 @@ namespace CMS.Backend.Controllers
         }
 
         // 3. Định nghĩa đường dẫn nhận ID trực tiếp: api/posts/{id}
+        // Đồng bộ hoàn hảo để cung cấp đầy đủ thông tin cho phần "BlogDetailPage"
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(int id)
         {
-            // 3.1. Quét bảng Posts để tìm bài viết đầu tiên có Id khớp với tham số
+            // 3.1. Quét bảng Posts và gọt tỉa dữ liệu bài viết kèm thông tin Chuyên mục
             var post = await _context.Posts
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .Where(p => p.Id == id)
+                .Select(p => new {
+                    p.Id,
+                    p.Title,
+                    p.Content,
+                    p.ImageUrl,
+                    p.CreatedDate,
+                    p.CategoryId,
+                    CategoryName = p.Category != null ? p.Category.Name : "General"
+                })
+                .FirstOrDefaultAsync();
 
             // 3.2 Xử lý kịch bản lỗi bảo vệ hệ thống: ID không tồn tại trong Database
             if (post == null)
@@ -81,10 +93,9 @@ namespace CMS.Backend.Controllers
                 return NotFound(new { message = "Không tìm thấy bài viết này trong hệ thống" });
             }
 
-            // 3.3. Trả về toàn bộ đối tượng bài viết (bao gồm cả trường Content chứa mã HTML) kèm mã 200 OK
+            // 3.3. Trả về toàn bộ đối tượng bài viết (bao gồm cả trường Content chứa dữ liệu văn bản và tên CategoryName) kèm mã 200 OK
             return Ok(post);
         }
 
     }
 }
-

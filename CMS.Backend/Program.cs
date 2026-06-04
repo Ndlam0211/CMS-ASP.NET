@@ -1,39 +1,43 @@
-﻿using CMS.Data;
+using CMS.Data;
+using CMS.Backend.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ==============================================================
-// 1. KHU VỰC ĐĂNG KÝ DỊCH VỤ (SERVICES CONTAINER)
+// 1. KHU V?C ??NG K� D?CH V? (SERVICES CONTAINER)
 // ==============================================================
 
 // Add services to the container.
-//Lệnh này vừa nhận diện các API mới, vừa giữ quyền biên dịch các View (.cshtml) của Web MVC cũ.
+//L?nh n�y v?a nh?n di?n c�c API m?i, v?a gi? quy?n bi�n d?ch c�c View (.cshtml) c?a Web MVC c?.
 builder.Services.AddControllersWithViews();
 
-// Đăng ký dịch vụ lõi giúp hệ thống tự động bóc tách thông tin Endpoint phục vụ Swagger
+// ??ng k� d?ch v? l�i gi�p h? th?ng t? ??ng b�c t�ch th�ng tin Endpoint ph?c v? Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); // Kích hoạt bộ sinh tài liệu API Swagger
+builder.Services.AddSwaggerGen(); // K�ch ho?t b? sinh t�i li?u API Swagger
 
-// Đăng ký DbContext vào hệ thống
+// ??ng k� DbContext v�o h? th?ng
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Khai báo dịch vụ xác thực Cookie
+// Register application services
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Khai b�o d?ch v? x�c th?c Cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; // Đường dẫn nếu chưa đăng nhập
-        options.AccessDeniedPath = "/Account/AccessDenied"; // Đường dẫn nếu vào trang không được phép
+        options.LoginPath = "/Account/Login"; // ???ng d?n n?u ch?a ??ng nh?p
+        options.AccessDeniedPath = "/Account/AccessDenied"; // ???ng d?n n?u v�o trang kh�ng ???c ph�p
     });
 
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // Cho phép ReactJS ở port 3000 gọi tới
-              .AllowAnyHeader()                     // Cho phép mọi loại Header (Content-Type, Authorization...)
-              .AllowAnyMethod()                     // Cho phép mọi phương thức HTTP (GET, POST, PUT, DELETE)
-              .AllowCredentials();                  // Hỗ trợ truyền Cookie/Session nếu cần sau này
+        policy.WithOrigins("http://localhost:3000") // Cho ph�p ReactJS ? port 3000 g?i t?i
+              .AllowAnyHeader()                     // Cho ph�p m?i lo?i Header (Content-Type, Authorization...)
+              .AllowAnyMethod()                     // Cho ph�p m?i ph??ng th?c HTTP (GET, POST, PUT, DELETE)
+              .AllowCredentials();                  // H? tr? truy?n Cookie/Session n?u c?n sau n�y
     });
 });
 
@@ -41,14 +45,14 @@ builder.Services.AddCors(options => {
 var app = builder.Build();
 
 // ==============================================================
-//  2. KHU VỰC CẤU HÌNH MIDDLEWARE (REQUEST PIPELINE)
+//  2. KHU V?C C?U H�NH MIDDLEWARE (REQUEST PIPELINE)
 // ==============================================================
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "LamCMS Web API v1");
-    c.RoutePrefix = "swagger"; // -- Đường dẫn truy cập mặc định sẽ là /swagger
+    c.RoutePrefix = "swagger"; // -- ???ng d?n truy c?p m?c ??nh s? l� /swagger
 });
 
 // Configure the HTTP request pipeline.
@@ -64,21 +68,21 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// [VỊ TRÍ ĐẶT CORS]: Phải nằm ngay giữa UseRouting và app.UseAuthentication(); UseAuthorization();
+// [V? TR� ??T CORS]: Ph?i n?m ngay gi?a UseRouting v� app.UseAuthentication(); UseAuthorization();
 app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 // ===============================================================
-// 3. KHU VỰC ĐỊNH TUYẾN PHÂN LUỒNG (ROUTING MAP)
+// 3. KHU V?C ??NH TUY?N PH�N LU?NG (ROUTING MAP)
 // ===============================================================
 
-// Phân luồng A: 
-// Ánh xạ các Endpoint API tuân thủ theo cấu trúc [Route("api/[controller]")]
+// Ph�n lu?ng A: 
+// �nh x? c�c Endpoint API tu�n th? theo c?u tr�c [Route("api/[controller]")]
 app.MapControllers();
 
-// Phân luồng B: Giữ lại bản đồ đường đi mặc định cho trang giao diện Web MVC cũ
+// Ph�n lu?ng B: Gi? l?i b?n ?? ???ng ?i m?c ??nh cho trang giao di?n Web MVC c?
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

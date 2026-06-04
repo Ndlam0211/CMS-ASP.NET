@@ -27,6 +27,8 @@ namespace CMS.Data.Entities
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
+        public string? ShippingAddress { get; set; } // Địa chỉ giao hàng
+
         public int CustomerId { get; set; } // Khóa ngoại liên kết tới Customer
 
         [ForeignKey("CustomerId")]
@@ -36,3 +38,4 @@ namespace CMS.Data.Entities
         public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
     }
 }
+

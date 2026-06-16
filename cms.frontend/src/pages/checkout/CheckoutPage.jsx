@@ -18,6 +18,7 @@ import {
 import { submitOrderThunk, clearSubmitStatus } from "../../store/slices/orderSlice";
 import { clearCart } from "../../store/slices/cartSlice";
 import { toast } from "react-toastify";
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
 
 // Define Form validation schema with Yup as requested
 const checkoutSchema = yup.object().shape({
@@ -376,7 +377,7 @@ export const CheckoutPage = () => {
             {items.map((item) => (
               <div key={item.id} className="flex gap-3 justify-between items-start text-xs border-b border-neutral-100 pb-4">
                 <div className="w-10 aspect-4/5 overflow-hidden bg-white border border-neutral-200 flex-shrink-0">
-                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={IMAGE_BASE_URL + item.imageUrl} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <div className="flex-grow">
                   <span className="font-bold text-neutral-800 line-clamp-1 block">{item.name}</span>

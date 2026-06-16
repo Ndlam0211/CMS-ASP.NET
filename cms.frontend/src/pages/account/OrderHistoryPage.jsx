@@ -13,6 +13,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { getOrderHistoryThunk } from "../../store/slices/orderSlice";
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
 
 export const OrderHistoryPage = () => {
   const dispatch = useDispatch();
@@ -178,7 +179,7 @@ export const OrderHistoryPage = () => {
                   <div key={item.id || idx} className="flex gap-4 items-start text-xs text-neutral-600">
                     {item.imageUrl && (
                       <div className="w-12 aspect-4/5 overflow-hidden bg-neutral-50 flex-shrink-0 border border-neutral-150">
-                        <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        <img src={IMAGE_BASE_URL + item.imageUrl} alt={item.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
                     )}
                     <div className="flex-grow">

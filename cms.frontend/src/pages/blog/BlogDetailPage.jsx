@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, Calendar, Share2, CircleAlert } from "lucide-react";
 import { postService } from "../../services/postService";
 import { IMAGE_BASE_URL } from "../../api/axiosClient";
+import { RichContentRenderer } from "../../components/blog/RichContentRenderer";
 
 export const BlogDetailPage = () => {
   const { id } = useParams();
@@ -73,9 +74,13 @@ export const BlogDetailPage = () => {
           Unable To Retrieve Diary
         </h2>
         <p className="text-xs text-neutral-500 max-w-sm mx-auto mb-6">
-          The requested chronicle is missing or currently being drafted. Return to the list to browse standard archives.
+          The requested chronicle is missing or currently being drafted. Return
+          to the list to browse standard archives.
         </p>
-        <Link to="/blog" className="px-6 py-2.5 bg-neutral-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-neutral-800 transition-colors">
+        <Link
+          to="/blog"
+          className="px-6 py-2.5 bg-neutral-900 text-white font-bold text-xs uppercase tracking-widest hover:bg-neutral-800 transition-colors"
+        >
           Browse Journal List
         </Link>
       </div>
@@ -86,17 +91,16 @@ export const BlogDetailPage = () => {
     <>
       {/* Reading Progress Indicator Bar */}
       <div className="fixed top-0 left-0 right-0 h-1 bg-neutral-100 z-[9999]">
-        <div 
+        <div
           className="h-full bg-neutral-900 transition-all duration-75 ease"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-        
         {/* Back Anchor */}
-        <Link 
-          to="/blog" 
+        <Link
+          to="/blog"
           className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest uppercase text-neutral-500 hover:text-neutral-950 hover:underline mb-8"
         >
           <ArrowLeft size={12} /> Back to Journal Entries
@@ -105,12 +109,16 @@ export const BlogDetailPage = () => {
         {/* Headings */}
         <header className="mb-8">
           <time className="text-[10px] font-bold font-mono tracking-wider text-neutral-400 uppercase block mb-3">
-            ATELIER CRITICAL STUDY • {post.categoryName} • {new Date(post.createdDate).toLocaleDateString("en-US", { year: "numeric", month: "long" })}
+            ATELIER CRITICAL STUDY • {post.categoryName} •{" "}
+            {new Date(post.createdDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+            })}
           </time>
           <h1 className="text-2xl sm:text-4.5xl font-black text-neutral-950 uppercase tracking-wide leading-tight mb-4">
             {post.title}
           </h1>
-          
+
           {/* Author / Date Info */}
           <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] font-mono text-neutral-400 border-t border-b border-neutral-100 py-3 mt-6">
             <div className="flex items-center gap-1.5">
@@ -119,7 +127,7 @@ export const BlogDetailPage = () => {
                 {new Date(post.createdDate).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
-                  day: "numeric"
+                  day: "numeric",
                 })}
               </span>
             </div>
@@ -144,16 +152,10 @@ export const BlogDetailPage = () => {
           />
         </div>
 
-        {/* Article Markdown mock layout */}
-        <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed text-sm sm:text-base space-y-6">
-          <p className="font-bold text-neutral-900 text-base sm:text-lg border-l-4 border-neutral-900 pl-4 py-1">
-            {post.content.split(".")[0]}.
-          </p>
-          <p>
-            {post.content}
-          </p>
+        {/* Article Content */}
+        <div className="space-y-6">
+          <RichContentRenderer content={post.content} />
         </div>
-
       </article>
     </>
   );

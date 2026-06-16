@@ -1,0 +1,6 @@
+{
+  "name": "Fashion Ecommerce Store",
+  "description": "A modern and minimalist fashion e-commerce shopping experience",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

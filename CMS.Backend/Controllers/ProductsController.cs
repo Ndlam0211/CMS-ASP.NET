@@ -139,5 +139,77 @@ namespace CMS.Backend.Controllers
 
             return Ok(product);
         }
+
+        // 4. API Lấy danh sách sản phẩm mới nhất (8 sản phẩm)
+        // Đường dẫn truy cập: GET https://localhost:xxxx/api/products/latest
+        [HttpGet("latest")]
+        public async Task<IActionResult> GetLatest()
+        {
+            try
+            {
+                var products = await _context.Products
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Take(8)
+                    .Select(p => new
+                    {
+                        p.Id,
+                        p.Name,
+                        p.Price,
+                        p.ImageUrl,
+                        p.StockQuantity,
+                        p.CreatedAt,
+                        p.IsFeatured,
+                        CategoryProductName = p.CategoryProduct != null ? p.CategoryProduct.Name : null
+                    })
+                    .ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    return Ok(new { message = "Không có sản phẩm nào", products = new List<object>() });
+                }
+
+                return Ok(new { products = products });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách sản phẩm mới nhất", detail = ex.Message });
+            }
+        }
+
+        // 5. API Lấy danh sách sản phẩm nổi bật (isFeatured = true)
+        // Đường dẫn truy cập: GET https://localhost:xxxx/api/products/featured
+        [HttpGet("featured")]
+        public async Task<IActionResult> GetFeatured()
+        {
+            try
+            {
+                var products = await _context.Products
+                    .Where(p => p.IsFeatured == true)
+                    .OrderByDescending(p => p.CreatedAt)
+                    .Select(p => new
+                    {
+                        p.Id,
+                        p.Name,
+                        p.Price,
+                        p.ImageUrl,
+                        p.StockQuantity,
+                        p.CreatedAt,
+                        p.IsFeatured,
+                        CategoryProductName = p.CategoryProduct != null ? p.CategoryProduct.Name : null
+                    })
+                    .ToListAsync();
+
+                if (products.Count == 0)
+                {
+                    return Ok(new { message = "Không có sản phẩm nổi bật nào", products = new List<object>() });
+                }
+
+                return Ok(new { products = products });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi lấy danh sách sản phẩm nổi bật", detail = ex.Message });
+            }
+        }
     }
 }

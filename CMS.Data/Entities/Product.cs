@@ -34,6 +34,12 @@ namespace CMS.Data.Entities
 
         public string? ImageUrl { get; set; } // Hình ảnh
 
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now; // Ngày tạo
+
+        [Required]
+        public bool IsFeatured { get; set; } = false; // Sản phẩm nổi bật
+
         // Khóa ngoại nối tới CategoryProduct
         public int CategoryProductId { get; set; }
 

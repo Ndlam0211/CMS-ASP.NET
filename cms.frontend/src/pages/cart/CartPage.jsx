@@ -15,6 +15,7 @@ import {
   updateCartQuantity 
 } from "../../store/slices/cartSlice";
 import { toast } from "react-toastify";
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
 
 export const CartPage = () => {
   const dispatch = useDispatch();
@@ -113,7 +114,7 @@ export const CartPage = () => {
               <div className="w-24 sm:w-28 aspect-4/5 flex-shrink-0 bg-neutral-50 overflow-hidden border border-neutral-100">
                 <Link to={`/product/${item.id}`}>
                   <img
-                    src={item.imageUrl}
+                    src={IMAGE_BASE_URL + item.imageUrl}
                     alt={item.name}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"

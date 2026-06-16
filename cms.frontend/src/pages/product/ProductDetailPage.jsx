@@ -17,6 +17,7 @@ import { addToCart } from "../../store/slices/cartSlice";
 import { toast } from "react-toastify";
 import ProductBadge from "../../components/product/ProductBadge";
 import ProductCard from "../../components/product/ProductCard";
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
 
 export const ProductDetailPage = () => {
   const { id } = useParams();
@@ -128,25 +129,34 @@ export const ProductDetailPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      
       {/* Breadcrumb Menu */}
       <nav className="text-[11px] font-mono tracking-wide text-neutral-400 uppercase mb-8 flex items-center gap-1.5 overflow-x-auto whitespace-nowrap">
-        <Link to="/" className="hover:text-neutral-900 transition-colors">Home</Link>
+        <Link to="/" className="hover:text-neutral-900 transition-colors">
+          Home
+        </Link>
         <span>/</span>
-        <Link to="/shop" className="hover:text-neutral-900 transition-colors">Catalog</Link>
+        <Link to="/shop" className="hover:text-neutral-900 transition-colors">
+          Catalog
+        </Link>
         <span>/</span>
-        <Link to={`/shop?categoryProductId=${currentProduct.categoryProductId}`} className="hover:text-neutral-900 transition-colors">{categoryName}</Link>
+        <Link
+          to={`/shop?categoryProductId=${currentProduct.categoryProductId}`}
+          className="hover:text-neutral-900 transition-colors"
+        >
+          {categoryName}
+        </Link>
         <span>/</span>
-        <span className="text-neutral-800 font-bold truncate max-w-xs">{currentProduct.name}</span>
+        <span className="text-neutral-800 font-bold truncate max-w-xs">
+          {currentProduct.name}
+        </span>
       </nav>
 
       {/* Main info panel layout */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 items-start mb-24">
-        
         {/* LEFT COLUMN: Premium High-Res image panel */}
         <div className="border border-neutral-100 overflow-hidden bg-neutral-50 aspect-4/5 w-full">
           <img
-            src={currentProduct.imageUrl}
+            src={IMAGE_BASE_URL + currentProduct.imageUrl}
             alt={currentProduct.name}
             className="w-full h-full object-cover transition-all"
             referrerPolicy="no-referrer"
@@ -155,13 +165,15 @@ export const ProductDetailPage = () => {
 
         {/* RIGHT COLUMN: Styling particulars */}
         <div className="flex flex-col gap-6">
-          
           <div>
             <div className="flex gap-2 items-center mb-2">
               <span className="text-xs font-semibold tracking-widest text-neutral-400 uppercase">
                 {categoryName}
               </span>
-              <ProductBadge stockQuantity={currentProduct.stockQuantity} categoryProductId={currentProduct.categoryProductId} />
+              <ProductBadge
+                stockQuantity={currentProduct.stockQuantity}
+                categoryProductId={currentProduct.categoryProductId}
+              />
             </div>
 
             <h1 className="text-2xl sm:text-3.5xl font-black text-neutral-900 uppercase tracking-wide leading-tight mb-3">
@@ -172,7 +184,9 @@ export const ProductDetailPage = () => {
             <div className="flex items-center gap-2 mb-4">
               <div className="flex text-amber-400 gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className="text-sm">★</span>
+                  <span key={i} className="text-sm">
+                    ★
+                  </span>
                 ))}
               </div>
               <span className="text-xs text-neutral-500 font-mono">
@@ -194,7 +208,8 @@ export const ProductDetailPage = () => {
               Philosophical Description
             </h4>
             <p className="text-sm text-neutral-600 leading-relaxed">
-              {currentProduct.description || "Indulge in tailored comfort with our signature garment. Built with refined double-stitched reinforcements, lightweight yet durable textile architectures, and colored using low-impact natural processes. Adapts smoothly to changing seasons for effortless smart-casual layouts."}
+              {currentProduct.description ||
+                "Indulge in tailored comfort with our signature garment. Built with refined double-stitched reinforcements, lightweight yet durable textile architectures, and colored using low-impact natural processes. Adapts smoothly to changing seasons for effortless smart-casual layouts."}
             </p>
           </div>
 
@@ -255,7 +270,9 @@ export const ProductDetailPage = () => {
                 }`}
               >
                 <ShoppingBag size={14} />
-                {currentProduct.stockQuantity === 0 ? "Out of Stock" : "Add To Bag"}
+                {currentProduct.stockQuantity === 0
+                  ? "Out of Stock"
+                  : "Add To Bag"}
               </button>
 
               <button
@@ -267,7 +284,10 @@ export const ProductDetailPage = () => {
                 }`}
                 title="Add to wishlist"
               >
-                <Heart size={16} fill={isWishlisted ? "currentColor" : "none"} />
+                <Heart
+                  size={16}
+                  fill={isWishlisted ? "currentColor" : "none"}
+                />
               </button>
             </div>
           </div>
@@ -283,11 +303,13 @@ export const ProductDetailPage = () => {
               <span>30 Day Returns</span>
             </div>
             <div className="flex items-center gap-2">
-              <ShieldCheck size={14} className="text-neutral-800 flex-shrink-0" />
+              <ShieldCheck
+                size={14}
+                className="text-neutral-800 flex-shrink-0"
+              />
               <span>Genuine Cotton Warranty</span>
             </div>
           </div>
-
         </div>
       </div>
 
@@ -299,9 +321,11 @@ export const ProductDetailPage = () => {
               <h2 className="text-lg sm:text-xl font-bold uppercase tracking-wide text-neutral-900">
                 You May Also Match
               </h2>
-              <p className="text-xs text-neutral-400 font-mono mt-0.5">Frequently matched from {categoryName}</p>
+              <p className="text-xs text-neutral-400 font-mono mt-0.5">
+                Frequently matched from {categoryName}
+              </p>
             </div>
-            <Link 
+            <Link
               to={`/shop?categoryProductId=${currentProduct.categoryProductId}`}
               className="text-xs font-bold uppercase tracking-wider text-neutral-900 hover:underline"
             >
@@ -317,7 +341,6 @@ export const ProductDetailPage = () => {
           </div>
         </section>
       )}
-
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Clock, Calendar, Share2, CircleAlert } from "lucide-react";
 import { postService } from "../../services/postService";
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
 
 export const BlogDetailPage = () => {
   const { id } = useParams();
@@ -136,7 +137,7 @@ export const BlogDetailPage = () => {
         {/* Hero Visual */}
         <div className="aspect-21/9 bg-neutral-50 border border-neutral-100 overflow-hidden mb-10">
           <img
-            src={post.imageUrl}
+            src={IMAGE_BASE_URL + post.imageUrl}
             alt={post.title}
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
@@ -150,16 +151,6 @@ export const BlogDetailPage = () => {
           </p>
           <p>
             {post.content}
-          </p>
-          <p>
-            Furthermore, our textile archives indicate that using Supima cotton results in garments that maintain color fidelity up to 3x longer than traditional carded cotton weaves. When combined with customized natural indigo bath details, we accomplish a deep shade consistency that resists fading while promoting water recycling values in global supply channels.
-          </p>
-          <p className="bg-neutral-50/50 p-6 border border-neutral-100 font-mono text-xs text-neutral-500 leading-relaxed my-8">
-            "Architecture in apparel begins with the single fiber. If the structural integrity of the yarn is compromised, no amount of fine-tailored stitching can save the silhouette over time." <br />
-            <span className="block mt-2 font-bold text-neutral-800 uppercase text-[10px]">— Head Designer, Atelier Kyoto Studio</span>
-          </p>
-          <p>
-            To conclude, minimalist dressing isn't merely about owning fewer pieces. It's about maintaining a highly calculated inventory of adaptable items that complement one another seamlessly. Investing in durable garments remains the strongest contribution toward mindful fashion consumption and smart spatial living.
           </p>
         </div>
 

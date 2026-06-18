@@ -18,7 +18,7 @@ export const ShopHeader = ({
       <div className="text-xs text-neutral-500 font-mono">
         Showing{" "}
         <span className="font-bold text-neutral-900">{productsCount}</span> of{" "}
-        <span className="font-bold text-neutral-900">{totalItems}</span> pieces
+        <span className="font-bold text-neutral-900">{totalItems}</span> products
       </div>
     </div>
   );

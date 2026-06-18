@@ -5,11 +5,19 @@ export const ActiveTagsIndicator = ({
   activeSearch,
   activeCategory,
   activeSort,
+  activeMinPrice,
+  activeMaxPrice,
   activeCategoryName,
   updateQueryParam,
   handleClearAllFilters,
 }) => {
-  if (!activeSearch && !activeCategory && !activeSort) {
+  if (
+    !activeSearch &&
+    !activeCategory &&
+    !activeSort &&
+    !activeMinPrice &&
+    !activeMaxPrice
+  ) {
     return null;
   }
 
@@ -45,6 +53,20 @@ export const ActiveTagsIndicator = ({
           Sort: {activeSort === "asc" ? "Price Low-High" : "Price High-Low"}
           <button
             onClick={() => updateQueryParam("sortPrice", "")}
+            className="p-0.5 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900"
+          >
+            <X size={10} />
+          </button>
+        </span>
+      )}
+      {(activeMinPrice || activeMaxPrice) && (
+        <span className="inline-flex items-center gap-1 bg-white border border-neutral-200 px-2 py-0.5 text-xs text-neutral-700">
+          Price: {activeMinPrice || "0"} - {activeMaxPrice || "∞"}
+          <button
+            onClick={() => {
+              updateQueryParam("minPrice", "");
+              updateQueryParam("maxPrice", "");
+            }}
             className="p-0.5 hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900"
           >
             <X size={10} />

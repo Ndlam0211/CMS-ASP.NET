@@ -27,15 +27,21 @@ export const ShopPage = () => {
   const activeCategory = searchParams.get("categoryProductId") || "";
   const activeSearch = searchParams.get("search") || "";
   const activeSort = searchParams.get("sortPrice") || "";
+  const activeMinPrice = searchParams.get("minPrice") || "";
+  const activeMaxPrice = searchParams.get("maxPrice") || "";
   const activePage = parseInt(searchParams.get("page") || "1");
 
   const [localSearch, setLocalSearch] = useState(activeSearch);
+  const [localMinPrice, setLocalMinPrice] = useState(activeMinPrice);
+  const [localMaxPrice, setLocalMaxPrice] = useState(activeMaxPrice);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Sync state if URL search string changes directly
   useEffect(() => {
     setLocalSearch(activeSearch);
-  }, [activeSearch]);
+    setLocalMinPrice(activeMinPrice);
+    setLocalMaxPrice(activeMaxPrice);
+  }, [activeSearch, activeMinPrice, activeMaxPrice]);
 
   // Load Categories & Products on filters change
   useEffect(() => {
@@ -45,11 +51,21 @@ export const ShopPage = () => {
         categoryProductId: activeCategory,
         search: activeSearch,
         sortPrice: activeSort,
+        minPrice: activeMinPrice ? parseFloat(activeMinPrice) : undefined,
+        maxPrice: activeMaxPrice ? parseFloat(activeMaxPrice) : undefined,
         page: activePage,
         pageSize: 8,
       }),
     );
-  }, [dispatch, activeCategory, activeSearch, activeSort, activePage]);
+  }, [
+    dispatch,
+    activeCategory,
+    activeSearch,
+    activeSort,
+    activeMinPrice,
+    activeMaxPrice,
+    activePage,
+  ]);
 
   // Handle updates to query params helper
   const updateQueryParam = (key, value) => {
@@ -77,6 +93,8 @@ export const ShopPage = () => {
   const handleClearAllFilters = () => {
     setSearchParams(new URLSearchParams());
     setLocalSearch("");
+    setLocalMinPrice("");
+    setLocalMaxPrice("");
   };
 
   const handleCategorySelect = (id) => {
@@ -104,8 +122,14 @@ export const ShopPage = () => {
           activeCategory={activeCategory}
           activeSearch={activeSearch}
           activeSort={activeSort}
+          activeMinPrice={activeMinPrice}
+          activeMaxPrice={activeMaxPrice}
           localSearch={localSearch}
           setLocalSearch={setLocalSearch}
+          localMinPrice={localMinPrice}
+          setLocalMinPrice={setLocalMinPrice}
+          localMaxPrice={localMaxPrice}
+          setLocalMaxPrice={setLocalMaxPrice}
           handleSearchSubmit={handleSearchSubmit}
           handleCategorySelect={handleCategorySelect}
           updateQueryParam={updateQueryParam}
@@ -127,8 +151,14 @@ export const ShopPage = () => {
             onClose={() => setShowMobileFilters(false)}
             categories={categories}
             activeCategory={activeCategory}
+            activeMinPrice={activeMinPrice}
+            activeMaxPrice={activeMaxPrice}
             localSearch={localSearch}
             setLocalSearch={setLocalSearch}
+            localMinPrice={localMinPrice}
+            setLocalMinPrice={setLocalMinPrice}
+            localMaxPrice={localMaxPrice}
+            setLocalMaxPrice={setLocalMaxPrice}
             handleCategorySelect={handleCategorySelect}
             handleSearchSubmit={handleSearchSubmit}
             handleClearAllFilters={handleClearAllFilters}
@@ -140,6 +170,8 @@ export const ShopPage = () => {
             activeSearch={activeSearch}
             activeCategory={activeCategory}
             activeSort={activeSort}
+            activeMinPrice={activeMinPrice}
+            activeMaxPrice={activeMaxPrice}
             activeCategoryName={activeCategoryName}
             updateQueryParam={updateQueryParam}
             handleClearAllFilters={handleClearAllFilters}

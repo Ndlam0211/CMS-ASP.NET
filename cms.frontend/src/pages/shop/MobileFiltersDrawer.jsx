@@ -6,8 +6,14 @@ export const MobileFiltersDrawer = ({
   onClose,
   categories,
   activeCategory,
+  activeMinPrice,
+  activeMaxPrice,
   localSearch,
   setLocalSearch,
+  localMinPrice,
+  setLocalMinPrice,
+  localMaxPrice,
+  setLocalMaxPrice,
   handleCategorySelect,
   handleSearchSubmit,
   handleClearAllFilters,
@@ -97,6 +103,41 @@ export const MobileFiltersDrawer = ({
                     </button>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-3">
+                Filter Price
+              </h3>
+              <div className="flex flex-col gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Min Price"
+                  value={localMinPrice}
+                  onChange={(e) => setLocalMinPrice(e.target.value)}
+                  className="w-full bg-neutral-50 text-xs border border-neutral-200 px-3 py-2 focus:outline-none"
+                />
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Max Price"
+                  value={localMaxPrice}
+                  onChange={(e) => setLocalMaxPrice(e.target.value)}
+                  className="w-full bg-neutral-50 text-xs border border-neutral-200 px-3 py-2 focus:outline-none"
+                />
+                <button
+                  onClick={() => {
+                    updateQueryParam("minPrice", localMinPrice);
+                    updateQueryParam("maxPrice", localMaxPrice);
+                    onClose();
+                  }}
+                  className="w-full bg-neutral-900 text-white text-xs py-2 font-semibold hover:bg-neutral-800 transition-colors"
+                >
+                  Apply Price
+                </button>
               </div>
             </div>
           </div>

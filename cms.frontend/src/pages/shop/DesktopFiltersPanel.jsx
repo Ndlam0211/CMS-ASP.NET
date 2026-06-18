@@ -6,8 +6,14 @@ export const DesktopFiltersPanel = ({
   activeCategory,
   activeSearch,
   activeSort,
+  activeMinPrice,
+  activeMaxPrice,
   localSearch,
   setLocalSearch,
+  localMinPrice,
+  setLocalMinPrice,
+  localMaxPrice,
+  setLocalMaxPrice,
   handleSearchSubmit,
   handleCategorySelect,
   updateQueryParam,
@@ -19,7 +25,7 @@ export const DesktopFiltersPanel = ({
         {/* Search filter panel */}
         <div className="border-b border-neutral-100 pb-5">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-3">
-            Search Catalog
+            Search
           </h3>
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
@@ -77,6 +83,61 @@ export const DesktopFiltersPanel = ({
           </div>
         </div>
 
+        {/* Price Range Filter panel */}
+        <div className="border-b border-neutral-100 pb-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-3">
+            Price Range
+          </h3>
+          <div className="flex flex-col gap-2.5">
+            <div>
+              <label className="text-[10px] text-neutral-500 uppercase tracking-wide">
+                Min Price
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="0"
+                value={localMinPrice}
+                onChange={(e) => setLocalMinPrice(e.target.value)}
+                onBlur={() => {
+                  if (localMinPrice !== activeMinPrice) {
+                    updateQueryParam("minPrice", localMinPrice);
+                  }
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    updateQueryParam("minPrice", localMinPrice);
+                  }
+                }}
+                className="w-full bg-neutral-50 text-xs border border-neutral-200 px-3 py-2 focus:outline-none focus:border-neutral-800 transition-all"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-neutral-500 uppercase tracking-wide">
+                Max Price
+              </label>
+              <input
+                type="number"
+                min="0"
+                placeholder="∞"
+                value={localMaxPrice}
+                onChange={(e) => setLocalMaxPrice(e.target.value)}
+                onBlur={() => {
+                  if (localMaxPrice !== activeMaxPrice) {
+                    updateQueryParam("maxPrice", localMaxPrice);
+                  }
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    updateQueryParam("maxPrice", localMaxPrice);
+                  }
+                }}
+                className="w-full bg-neutral-50 text-xs border border-neutral-200 px-3 py-2 focus:outline-none focus:border-neutral-800 transition-all"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Pricing Sorter panel */}
         <div className="border-b border-neutral-100 pb-5">
           <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-900 mb-3">
@@ -94,7 +155,11 @@ export const DesktopFiltersPanel = ({
         </div>
 
         {/* Clear All button */}
-        {(activeCategory || activeSearch || activeSort) && (
+        {(activeCategory ||
+          activeSearch ||
+          activeSort ||
+          activeMinPrice ||
+          activeMaxPrice) && (
           <button
             onClick={handleClearAllFilters}
             className="w-full text-center border border-dashed border-red-200 text-red-600 hover:bg-red-50 py-2 text-xs font-semibold tracking-wide transition-colors"

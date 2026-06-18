@@ -55,11 +55,14 @@ export const LoginPage = () => {
   const onSubmitHandler = async (data) => {
     const result = await dispatch(loginUser({ email: data.email, password: data.password }));
     console.log("Login Result:", result);
-    if (loginUser.fulfilled.match(result.payload.customer)) {
-      toast.success(`Welcome back, ${result.payload.customer.fullName || "User"}!`, {
-        position: "bottom-right",
-        autoClose: 2500,
-      });
+    if (loginUser.fulfilled.match(result)) {
+      toast.success(
+        `Welcome back, ${result.payload.fullName || "User"}!`,
+        {
+          position: "bottom-right",
+          autoClose: 2500,
+        },
+      );
     } else {
       toast.error(result.payload || "Login credentials rejected");
     }

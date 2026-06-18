@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authService } from "../../services/authService";
+import { getErrorMessage } from "../../helper/message";
 
 const storedUser = localStorage.getItem("customer_user")
   ? JSON.parse(localStorage.getItem("customer_user"))
@@ -19,10 +20,13 @@ export const loginUser = createAsyncThunk(
       const data = await authService.login(credentials);
       // Save to localStorage
       localStorage.setItem("customer_user", JSON.stringify(data.customer || data));
-      return data.customer || data; // Return the user data
+      console.log("Login Data:", data);
+      return data.customer; // Return the user data
     } catch (error) {
       console.error("Login Error:", error);
-      return rejectWithValue(error.message || "Login failed");
+      return rejectWithValue(
+        getErrorMessage(error)
+      );
     }
   }
 );
@@ -32,6 +36,7 @@ export const registerUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const data = await authService.register(userData);
+      console.log("Registration Data:", data);
       // Auto login after registered
       if (data && (data.customer || data.id)) {
         const customerData = data.customer || data;
@@ -49,7 +54,9 @@ export const registerUser = createAsyncThunk(
       return data;
     } catch (error) {
       console.error("Registration Error:", error);
-      return rejectWithValue(error.message || "Registration failed");
+      return rejectWithValue(
+        getErrorMessage(error)
+      );
     }
   }
 );

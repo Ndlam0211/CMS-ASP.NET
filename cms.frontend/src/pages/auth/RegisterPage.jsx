@@ -54,7 +54,8 @@ export const RegisterPage = () => {
 
   const onSubmitHandler = async (data) => {
     const result = await dispatch(registerUser(data));
-    
+    console.log("Registration Result:", result);
+
     if (registerUser.fulfilled.match(result)) {
       toast.success("Account created successfully. Welcome to Atelier!", {
         position: "bottom-right",

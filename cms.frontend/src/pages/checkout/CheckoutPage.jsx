@@ -44,7 +44,7 @@ export const CheckoutPage = () => {
 
   // Math totals
   const shippingCost = totalAmount >= 150 ? 0 : 15;
-  const taxCost = totalAmount * 0.08;
+  const taxCost = totalAmount * 0.1; // 10% tax
   const grandTotal = totalAmount + shippingCost + taxCost;
 
   // React Hook Form initialization
@@ -386,7 +386,7 @@ export const CheckoutPage = () => {
                   </span>
                 </div>
                 <div className="text-right font-bold text-neutral-900 font-mono">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {(item.price * item.quantity).toLocaleString("vi-VN")} ₫
                 </div>
               </div>
             ))}
@@ -395,24 +395,24 @@ export const CheckoutPage = () => {
           <div className="flex flex-col gap-2.5 font-mono text-xs text-neutral-600 mb-6">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span className="font-bold text-neutral-900">${totalAmount.toFixed(2)}</span>
+              <span className="font-bold text-neutral-900">{totalAmount.toLocaleString("vi-VN")} ₫</span>
             </div>
             <div className="flex justify-between">
               <span>Courier Delivery</span>
               {shippingCost === 0 ? (
                 <span className="text-emerald-600 font-bold uppercase text-[10px]">Free</span>
               ) : (
-                <span className="font-bold text-neutral-900">${shippingCost.toFixed(2)}</span>
+                <span className="font-bold text-neutral-900">{shippingCost.toLocaleString("vi-VN")} ₫</span>
               )}
             </div>
             <div className="flex justify-between">
-              <span>Estimated Tax (8%)</span>
-              <span className="font-bold text-neutral-900">${taxCost.toFixed(2)}</span>
+              <span>Estimated Tax (10%)</span>
+              <span className="font-bold text-neutral-900">{taxCost.toLocaleString("vi-VN")} ₫</span>
             </div>
             <hr className="border-neutral-200 my-1 pb-1" />
             <div className="flex justify-between text-neutral-900 font-black text-sm">
               <span className="uppercase">Grand Total</span>
-              <span>${grandTotal.toFixed(2)}</span>
+              <span>{grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
           </div>
 

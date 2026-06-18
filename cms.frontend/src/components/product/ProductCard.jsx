@@ -5,13 +5,13 @@ import { Heart, ShoppingBag, Eye, X, Check, ArrowRight } from "lucide-react";
 import { addToCart } from "../../store/slices/cartSlice";
 import { toast } from "react-toastify";
 import ProductBadge from "./ProductBadge";
-import {IMAGE_BASE_URL}  from "../../api/axiosClient";
-import { 
-  Dialog, 
-  DialogContent, 
-  IconButton, 
-  Rating, 
-  Button 
+import { IMAGE_BASE_URL } from "../../api/axiosClient";
+import {
+  Dialog,
+  DialogContent,
+  IconButton,
+  Rating,
+  Button,
 } from "@mui/material";
 
 export const ProductCard = ({ product, categories = [] }) => {
@@ -33,7 +33,7 @@ export const ProductCard = ({ product, categories = [] }) => {
     dispatch(addToCart({ product, quantity: 1 }));
     toast.success(`Added ${product.name} to cart!`, {
       position: "bottom-right",
-      autoClose: 2000
+      autoClose: 2000,
     });
   };
 
@@ -43,12 +43,12 @@ export const ProductCard = ({ product, categories = [] }) => {
     if (!isWishlisted) {
       toast.success(`Saved ${product.name} to wishlist!`, {
         position: "bottom-right",
-        autoClose: 1500
+        autoClose: 1500,
       });
     } else {
       toast.info(`Removed ${product.name} from wishlist.`, {
         position: "bottom-right",
-        autoClose: 1500
+        autoClose: 1500,
       });
     }
   };
@@ -69,7 +69,7 @@ export const ProductCard = ({ product, categories = [] }) => {
     }
     dispatch(addToCart({ product, quantity: 1 }));
     toast.success(`Added ${product.name} to cart!`, {
-      position: "bottom-right"
+      position: "bottom-right",
     });
     setQuickViewOpen(false);
   };
@@ -92,7 +92,10 @@ export const ProductCard = ({ product, categories = [] }) => {
 
         {/* Float tags */}
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
-          <ProductBadge stockQuantity={product.stockQuantity} categoryProductId={product.categoryProductId} />
+          <ProductBadge
+            stockQuantity={product.stockQuantity}
+            categoryProductId={product.categoryProductId}
+          />
         </div>
 
         {/* Hover quick actions box */}
@@ -100,8 +103,8 @@ export const ProductCard = ({ product, categories = [] }) => {
           <button
             onClick={handleWishlistToggle}
             className={`p-2.5 rounded-full shadow-md backdrop-blur-md transition-colors ${
-              isWishlisted 
-                ? "bg-red-500 text-white hover:bg-red-600" 
+              isWishlisted
+                ? "bg-red-500 text-white hover:bg-red-600"
                 : "bg-white/90 text-neutral-800 hover:bg-neutral-900 hover:text-white"
             }`}
             title="Add to Wishlist"
@@ -126,8 +129,8 @@ export const ProductCard = ({ product, categories = [] }) => {
         </span>
 
         {/* Product Name (capped at 2 lines) */}
-        <Link 
-          to={`/product/${product.id}`} 
+        <Link
+          to={`/product/${product.id}`}
           className="text-sm font-medium text-neutral-800 line-clamp-2 hover:text-neutral-900 transition-colors mb-2 min-h-10 flex items-start"
         >
           {product.name}
@@ -136,9 +139,9 @@ export const ProductCard = ({ product, categories = [] }) => {
         {/* Price & Cart button aligned */}
         <div className="mt-auto pt-2 flex items-center justify-between border-t border-neutral-50">
           <span className="text-base font-semibold text-neutral-900">
-            ${product.price.toFixed(2)}
+            {product.price.toLocaleString("vi-VN")} ₫
           </span>
-          
+
           <button
             onClick={handleAddToCart}
             disabled={product.stockQuantity === 0}
@@ -155,18 +158,18 @@ export const ProductCard = ({ product, categories = [] }) => {
       </div>
 
       {/* MATERIAL-UI QUICK VIEW DIALOG */}
-      <Dialog 
-        open={quickViewOpen} 
+      <Dialog
+        open={quickViewOpen}
         onClose={handleQuickViewClose}
         maxWidth="md"
         fullWidth
         PaperProps={{
-          className: "rounded-none !m-4"
+          className: "rounded-none !m-4",
         }}
         slotProps={{
           backdrop: {
-            className: "backdrop-blur-xs"
-          }
+            className: "backdrop-blur-xs",
+          },
         }}
       >
         <div className="relative">
@@ -196,7 +199,10 @@ export const ProductCard = ({ product, categories = [] }) => {
                     <span className="text-xs font-semibold tracking-widest text-neutral-400 uppercase">
                       {categoryName}
                     </span>
-                    <ProductBadge stockQuantity={product.stockQuantity} categoryProductId={product.categoryProductId} />
+                    <ProductBadge
+                      stockQuantity={product.stockQuantity}
+                      categoryProductId={product.categoryProductId}
+                    />
                   </div>
 
                   <h2 className="text-2xl font-bold text-neutral-900 mb-3 leading-snug">
@@ -205,7 +211,12 @@ export const ProductCard = ({ product, categories = [] }) => {
 
                   {/* Rating */}
                   <div className="flex items-center gap-2 mb-4">
-                    <Rating value={ratingMockValue} precision={0.5} readOnly size="small" />
+                    <Rating
+                      value={ratingMockValue}
+                      precision={0.5}
+                      readOnly
+                      size="small"
+                    />
                     <span className="text-xs text-neutral-500 font-mono">
                       {ratingMockValue} / 5.0 Rating
                     </span>
@@ -218,7 +229,8 @@ export const ProductCard = ({ product, categories = [] }) => {
 
                   {/* Description */}
                   <p className="text-sm text-neutral-600 leading-relaxed mb-6">
-                    {product.description || "Experience supreme ease with our signature fashion products. High-quality stitching, durable colorfastness, and tailored for absolute modern confidence."}
+                    {product.description ||
+                      "Experience supreme ease with our signature fashion products. High-quality stitching, durable colorfastness, and tailored for absolute modern confidence."}
                   </p>
 
                   {/* Sizes (Muji/Uniqlo feel) */}
@@ -255,7 +267,9 @@ export const ProductCard = ({ product, categories = [] }) => {
                     }`}
                   >
                     <ShoppingBag size={16} />
-                    {product.stockQuantity === 0 ? "Out of Stock" : "Add To Bag"}
+                    {product.stockQuantity === 0
+                      ? "Out of Stock"
+                      : "Add To Bag"}
                   </button>
 
                   <Link

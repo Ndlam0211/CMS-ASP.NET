@@ -62,7 +62,7 @@ export const CartPage = () => {
   // Math totals
   const shippingThreshold = 150;
   const shippingCost = totalAmount >= shippingThreshold || totalAmount === 0 ? 0 : 15;
-  const estimatedTaxRate = 0.08; // 8% tax
+  const estimatedTaxRate = 0.1; // 10% tax
   const taxCost = totalAmount * estimatedTaxRate;
   const grandTotal = totalAmount + shippingCost + taxCost;
 
@@ -90,7 +90,6 @@ export const CartPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      
       {/* Title */}
       <div className="border-b border-neutral-100 pb-6 mb-8">
         <span className="text-xs font-bold text-neutral-400 font-mono block mb-1">
@@ -102,12 +101,11 @@ export const CartPage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-        
         {/* LEFT COLUMN: Items list */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {items.map((item) => (
-            <div 
-              key={item.id} 
+            <div
+              key={item.id}
               className="flex gap-4 sm:gap-6 py-5 border-b border-neutral-100 last:border-0"
             >
               {/* Product preview image ratio 4:5 */}
@@ -126,7 +124,7 @@ export const CartPage = () => {
               <div className="flex-grow flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-4 mb-1">
-                    <Link 
+                    <Link
                       to={`/product/${item.id}`}
                       className="text-sm sm:text-base font-bold text-neutral-950 hover:underline line-clamp-2"
                     >
@@ -140,12 +138,20 @@ export const CartPage = () => {
                       <Trash2 size={15} />
                     </button>
                   </div>
-                  
+
                   {/* Size metadata placeholder (Uniqlo context) */}
                   <div className="text-[11px] text-neutral-400 font-mono mb-2 flex gap-3">
-                    <span>SIZE: <span className="text-neutral-700 font-bold">M</span></span>
+                    <span>
+                      SIZE:{" "}
+                      <span className="text-neutral-700 font-bold">M</span>
+                    </span>
                     <span>•</span>
-                    <span>COLOR: <span className="text-neutral-700 font-bold">Default</span></span>
+                    <span>
+                      COLOR:{" "}
+                      <span className="text-neutral-700 font-bold">
+                        Default
+                      </span>
+                    </span>
                   </div>
                 </div>
 
@@ -153,7 +159,14 @@ export const CartPage = () => {
                   {/* Qty increments counter */}
                   <div className="flex items-center border border-neutral-200 h-9 w-28 bg-white">
                     <button
-                      onClick={() => handleQtyChange(item.id, item.quantity, item.stockQuantity, false)}
+                      onClick={() =>
+                        handleQtyChange(
+                          item.id,
+                          item.quantity,
+                          item.stockQuantity,
+                          false,
+                        )
+                      }
                       className="w-8 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-all border-r border-neutral-100"
                     >
                       <Minus size={11} />
@@ -162,7 +175,14 @@ export const CartPage = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => handleQtyChange(item.id, item.quantity, item.stockQuantity, true)}
+                      onClick={() =>
+                        handleQtyChange(
+                          item.id,
+                          item.quantity,
+                          item.stockQuantity,
+                          true,
+                        )
+                      }
                       className="w-8 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-all border-l border-neutral-100"
                     >
                       <Plus size={11} />
@@ -171,13 +191,12 @@ export const CartPage = () => {
 
                   {/* Individual totals */}
                   <div className="text-right text-sm sm:text-base font-bold text-neutral-900 font-mono">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {(item.price * item.quantity).toLocaleString("vi-VN")} ₫
                     <span className="block text-[10px] font-normal font-mono text-neutral-400">
-                      ${item.price.toFixed(2)} / each
+                      {item.price.toLocaleString("vi-VN")} ₫ / each
                     </span>
                   </div>
                 </div>
-
               </div>
             </div>
           ))}
@@ -186,7 +205,8 @@ export const CartPage = () => {
           <div className="flex items-center gap-3.5 p-4 bg-neutral-50/50 border border-neutral-100 font-mono text-neutral-500 mt-6 text-xs leading-relaxed">
             <ShieldCheck size={20} className="text-neutral-700 flex-shrink-0" />
             <span>
-              Your transaction is 256-bit SSL secured. We strictly protect your consumer privacy and data encryption boundaries.
+              Your transaction is 256-bit SSL secured. We strictly protect your
+              consumer privacy and data encryption boundaries.
             </span>
           </div>
         </div>
@@ -200,31 +220,47 @@ export const CartPage = () => {
           <div className="flex flex-col gap-3 font-mono text-xs text-neutral-600 mb-6">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span className="font-bold text-neutral-900">${totalAmount.toFixed(2)}</span>
+              <span className="font-bold text-neutral-900">
+                ${totalAmount.toLocaleString("vi-VN")} ₫
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span>Shipping</span>
               {shippingCost === 0 ? (
-                <span className="text-emerald-600 font-bold uppercase tracking-wide">Free</span>
+                <span className="text-emerald-600 font-bold uppercase tracking-wide">
+                  Free
+                </span>
               ) : (
-                <span className="font-bold text-neutral-900">${shippingCost.toFixed(2)}</span>
+                <span className="font-bold text-neutral-900">
+                  ${shippingCost.toLocaleString("vi-VN")} ₫
+                </span>
               )}
             </div>
             {shippingCost > 0 && (
               <div className="text-[10px] text-neutral-400 bg-amber-50 p-2 border border-amber-100 leading-snug">
-                Spend <span className="font-bold text-neutral-700">${(shippingThreshold - totalAmount).toFixed(2)}</span> more to qualify for <span className="font-bold text-emerald-600">FREE SHIPPING</span>!
+                Spend{" "}
+                <span className="font-bold text-neutral-700">
+                  ${(shippingThreshold - totalAmount).toLocaleString("vi-VN")} ₫
+                </span>{" "}
+                more to qualify for{" "}
+                <span className="font-bold text-emerald-600">
+                  FREE SHIPPING
+                </span>
+                !
               </div>
             )}
             <div className="flex justify-between">
-              <span>Estimated Tax (8%)</span>
-              <span className="font-bold text-neutral-900">${taxCost.toFixed(2)}</span>
+              <span>Estimated Tax (10%)</span>
+              <span className="font-bold text-neutral-900">
+                ${taxCost.toLocaleString("vi-VN")} ₫
+              </span>
             </div>
-            
+
             <hr className="border-neutral-100 my-2" />
 
             <div className="flex justify-between text-sm text-neutral-900 font-black">
               <span className="uppercase">Grand Total</span>
-              <span>${grandTotal.toFixed(2)}</span>
+              <span>${grandTotal.toLocaleString("vi-VN")} ₫</span>
             </div>
           </div>
 
@@ -243,7 +279,6 @@ export const CartPage = () => {
             Continue Shopping
           </Link>
         </aside>
-
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Footer = ({ handleNewsletterSubmit }) => {
   return (
-    <footer className="mt-auto border-t border-neutral-150 bg-white grid grid-cols-1 lg:grid-cols-4 font-sans text-xs">
+    <footer className="mt-auto border-t border-neutral-150 bg-white grid grid-cols-1 lg:grid-cols-5 font-sans text-xs">
       {/* Newsletter joint section */}
       <div className="lg:col-span-2 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-neutral-150 flex flex-col md:flex-row items-center gap-8">
         <div className="flex-1 pr-0 md:pr-8">
@@ -58,6 +58,47 @@ const Footer = ({ handleNewsletterSubmit }) => {
           >
             Our Ethos
           </a>
+        </div>
+      </div>
+
+      {/* Contact information column */}
+      <div className="col-span-1 p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-neutral-150">
+        <h4 className="text-[11px] font-bold font-display uppercase tracking-widest mb-4 text-neutral-400">
+          Contact
+        </h4>
+        <div className="flex flex-col gap-2.5">
+          <div>
+            <p className="text-[10px] text-neutral-400 uppercase tracking-wide font-mono mb-1">
+              Address
+            </p>
+            <p className="text-neutral-800 text-xs leading-relaxed">
+              20 Tăng Nhơn Phú,
+              <br />
+              Phước Long, Hồ Chí Minh 700000
+            </p>
+          </div>
+          <div>
+            <p className="text-[10px] text-neutral-400 uppercase tracking-wide font-mono mb-1">
+              Email
+            </p>
+            <a
+              href="mailto:nguyendinhlam0211@gmail.com"
+              className="text-neutral-800 hover:text-neutral-500 transition-colors"
+            >
+              nguyendinhlam0211@gmail.com
+            </a>
+          </div>
+          <div>
+            <p className="text-[10px] text-neutral-400 uppercase tracking-wide font-mono mb-1">
+              Phone
+            </p>
+            <a
+              href="tel:+84 359 829 895"
+              className="text-neutral-800 hover:text-neutral-500 transition-colors"
+            >
+              +84 359 829 895
+            </a>
+          </div>
         </div>
       </div>
 

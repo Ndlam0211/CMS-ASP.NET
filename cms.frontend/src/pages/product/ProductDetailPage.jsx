@@ -196,7 +196,7 @@ export const ProductDetailPage = () => {
 
             {/* Pricing Tag */}
             <div className="text-3xl font-black text-neutral-950 font-mono">
-              ${currentProduct.price.toFixed(2)}
+              {currentProduct.price.toLocaleString("vi-VN")} ₫
             </div>
           </div>
 

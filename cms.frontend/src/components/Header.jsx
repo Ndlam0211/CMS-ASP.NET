@@ -74,7 +74,7 @@ const Header = ({
                   : "text-neutral-500"
               }`}
             >
-              Stories
+              Blog
             </Link>
           </nav>
 

@@ -28,6 +28,8 @@ namespace CMS.Backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] int? categoryProductId = null,
+            [FromQuery] decimal? minPrice = null,
+            [FromQuery] decimal? maxPrice = null,
             [FromQuery] string? search = null,
             [FromQuery] string? sortPrice = null,
             [FromQuery] int page = 1,
@@ -40,6 +42,17 @@ namespace CMS.Backend.Controllers
             if (categoryProductId.HasValue)
             {
                 query = query.Where(p => p.CategoryProductId == categoryProductId.Value);
+            }
+
+            // Lọc theo khoảng giá (minPrice và maxPrice) nếu được truyền vào
+            if(minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
             }
 
             // Lọc theo từ khóa tìm kiếm (Không phân biệt chữ hoa/thường)

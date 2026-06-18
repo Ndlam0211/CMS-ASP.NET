@@ -189,6 +189,7 @@ namespace CMS.Backend.Controllers
                     {
                         productId = od.ProductId,
                         productName = od.Product?.Name,
+                        imageUrl = od.Product?.ImageUrl,
                         quantity = od.Quantity,
                         unitPrice = od.UnitPrice,
                         subtotal = od.UnitPrice * od.Quantity

@@ -19,7 +19,7 @@ export const loginUser = createAsyncThunk(
       const data = await authService.login(credentials);
       // Save to localStorage
       localStorage.setItem("customer_user", JSON.stringify(data.customer || data));
-      return data;
+      return data.customer || data; // Return the user data
     } catch (error) {
       console.error("Login Error:", error);
       return rejectWithValue(error.message || "Login failed");

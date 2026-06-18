@@ -156,7 +156,7 @@ export const OrderHistoryPage = () => {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-neutral-100 text-xs font-mono text-neutral-500">
                 <div className="flex flex-wrap items-center gap-y-1 gap-x-4">
                   <div>
-                    Order ID: <span className="font-bold text-neutral-950 bg-neutral-50 border border-neutral-200 px-2.5 py-0.5">ORD-{order.id}</span>
+                    Order ID: <span className="font-bold text-neutral-950 bg-neutral-50 border border-neutral-200 px-2.5 py-0.5">ORD-{order.orderId}</span>
                   </div>
                   <div>•</div>
                   <div className="flex gap-1 items-center">

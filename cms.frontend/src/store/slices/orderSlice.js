@@ -28,7 +28,8 @@ export const getOrderHistoryThunk = createAsyncThunk(
   async (customerId, { rejectWithValue }) => {
     try {
       const response = await orderService.getOrdersByCustomer(customerId);
-      return response; // Array of orders
+      console.log("Fetched Order History:", response);
+      return response.orders; // Array of orders
     } catch (error) {
       return rejectWithValue(error.message || "Failed to load order history");
     }

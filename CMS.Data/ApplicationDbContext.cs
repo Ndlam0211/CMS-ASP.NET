@@ -18,14 +18,11 @@ namespace CMS.Data
     public class ApplicationDbContext : DbContext
 
     {
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 
         : base(options) { }
 
-
         // Khai báo các bảng dữ liệu
-
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Post> Posts { get; set; }

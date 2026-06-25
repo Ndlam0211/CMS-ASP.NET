@@ -87,6 +87,15 @@ namespace CMS.Backend.Controllers
                     return View(user);
                 }
 
+                if (string.IsNullOrWhiteSpace(user.PasswordHash))
+                {
+                    ModelState.AddModelError("PasswordHash", "Mật khẩu không được để trống!");
+                    return View(user);
+                }
+
+                // Hash mật khẩu bằng BCrypt trước khi lưu vào Database
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+
                 // Lưu User mới vào Database
                 _context.Users.Add(user);
                 _context.SaveChanges();
@@ -129,7 +138,7 @@ namespace CMS.Backend.Controllers
 
             {
 
-                user.PasswordHash = password; // Sau này sẽ mã hóa tại đây
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
             }
 
             else

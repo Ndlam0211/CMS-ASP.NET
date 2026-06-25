@@ -10,6 +10,8 @@ using CMS.Data; // Thay bằng namespace thực tế của anh
 using CMS.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CMS.Backend.Services;
+using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,10 +24,12 @@ namespace CMS.Backend.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -119,6 +123,21 @@ namespace CMS.Backend.Controllers
 
                 // Lưu tất cả thay đổi xuống database
                 await _context.SaveChangesAsync();
+
+                // Gửi email xác nhận đơn hàng
+                try
+                {
+                    await SendOrderConfirmationEmail(
+                        customerExists,
+                        newOrder,
+                        orderDetails,
+                        products
+                    );
+                }
+                catch (Exception emailEx)
+                {
+                    Console.WriteLine("Không thể gửi email xác nhận đơn hàng: " + emailEx.Message);
+                }
 
                 // Bước D: Trả về mã thành công 201 Created và gửi ngược lại mã ID đơn hàng vừa tạo
                 return StatusCode(201, new
@@ -222,6 +241,73 @@ namespace CMS.Backend.Controllers
                 2 => "Đã xong",
                 _ => "Không xác định"
             };
+        }
+
+        private async Task SendOrderConfirmationEmail(
+            Customer customer,
+            Order order,
+            List<OrderDetail> orderDetails,
+            Dictionary<int, Product> products)
+        {
+            var totalAmount = orderDetails.Sum(x => x.UnitPrice * x.Quantity);
+
+            var itemsHtml = new StringBuilder();
+
+            foreach (var item in orderDetails)
+            {
+                var product = products[item.ProductId];
+                var subtotal = item.UnitPrice * item.Quantity;
+
+                itemsHtml.Append($@"
+            <tr>
+                <td style='padding:8px;border:1px solid #ddd;'>{product.Name}</td>
+                <td style='padding:8px;border:1px solid #ddd;text-align:center;'>{item.Quantity}</td>
+                <td style='padding:8px;border:1px solid #ddd;text-align:right;'>{item.UnitPrice:N0} VNĐ</td>
+                <td style='padding:8px;border:1px solid #ddd;text-align:right;'>{subtotal:N0} VNĐ</td>
+            </tr>
+        ");
+            }
+
+            var body = $@"
+        <h2>Đặt hàng thành công!</h2>
+
+        <p>Xin chào <strong>{customer.FullName}</strong>,</p>
+
+        <p>Cảm ơn bạn đã đặt hàng tại LamCMS.</p>
+
+        <p><strong>Mã đơn hàng:</strong> #{order.Id}</p>
+        <p><strong>Ngày đặt:</strong> {order.OrderDate:dd/MM/yyyy HH:mm}</p>
+        <p><strong>Địa chỉ giao hàng:</strong> {order.ShippingAddress}</p>
+        <p><strong>Ghi chú:</strong> {order.Notes}</p>
+
+        <h3>Thông tin sản phẩm</h3>
+
+        <table style='border-collapse:collapse;width:100%;'>
+            <thead>
+                <tr>
+                    <th style='padding:8px;border:1px solid #ddd;text-align:left;'>Sản phẩm</th>
+                    <th style='padding:8px;border:1px solid #ddd;text-align:center;'>Số lượng</th>
+                    <th style='padding:8px;border:1px solid #ddd;text-align:right;'>Đơn giá</th>
+                    <th style='padding:8px;border:1px solid #ddd;text-align:right;'>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {itemsHtml}
+            </tbody>
+        </table>
+
+        <h3 style='text-align:right;'>Tổng tiền: {totalAmount:N0} VNĐ</h3>
+
+        <p>Đơn hàng của bạn đang ở trạng thái: <strong>Chờ xử lý</strong>.</p>
+
+        <p>Trân trọng,<br/>LamCMS Team</p>
+    ";
+
+            await _emailService.SendEmailAsync(
+                customer.Email,
+                $"Xác nhận đơn hàng #{order.Id}",
+                body
+            );
         }
     }
 }

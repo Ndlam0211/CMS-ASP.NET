@@ -70,7 +70,6 @@ export const LoginPage = () => {
 
   return (
     <div className="max-w-md mx-auto px-4 py-16 flex flex-col justify-center min-h-[60vh]">
-      
       {/* Visual Header */}
       <div className="text-center mb-8">
         <span className="inline-flex items-center gap-1.5 text-[10px] font-bold font-mono tracking-widest text-neutral-400 uppercase bg-neutral-50 px-2.5 py-1 mb-3">
@@ -80,13 +79,16 @@ export const LoginPage = () => {
           Login Account
         </h1>
         <p className="text-xs text-neutral-500 mt-1.5 leading-relaxed">
-          Sign into your Atelier profile to authorize trackable COD dispatches and order logs.
+          Sign into your Atelier profile to authorize trackable COD dispatches
+          and order logs.
         </p>
       </div>
 
       <div className="bg-white border border-neutral-150 p-6 sm:p-8 shadow-sm">
-        <form onSubmit={handleSubmit(onSubmitHandler)} className="flex flex-col gap-4">
-          
+        <form
+          onSubmit={handleSubmit(onSubmitHandler)}
+          className="flex flex-col gap-4"
+        >
           {/* Email */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold uppercase text-neutral-500 tracking-wider">
@@ -101,7 +103,9 @@ export const LoginPage = () => {
               }`}
             />
             {errors.email && (
-              <span className="text-[10px] font-mono text-red-500 font-bold">{errors.email.message}</span>
+              <span className="text-[10px] font-mono text-red-500 font-bold">
+                {errors.email.message}
+              </span>
             )}
           </div>
 
@@ -111,9 +115,12 @@ export const LoginPage = () => {
               <label className="text-xs font-bold uppercase text-neutral-500 tracking-wider">
                 Password
               </label>
-              <a href="#" className="text-[10px] text-neutral-400 hover:text-neutral-900 font-semibold uppercase">
+              <Link
+                to="/forgot-password"
+                className="text-[10px] text-neutral-400 hover:text-neutral-900 font-semibold uppercase"
+              >
                 Forgot?
-              </a>
+              </Link>
             </div>
             <input
               type="password"
@@ -124,7 +131,9 @@ export const LoginPage = () => {
               }`}
             />
             {errors.password && (
-              <span className="text-[10px] font-mono text-red-500 font-bold">{errors.password.message}</span>
+              <span className="text-[10px] font-mono text-red-500 font-bold">
+                {errors.password.message}
+              </span>
             )}
           </div>
 
@@ -143,28 +152,41 @@ export const LoginPage = () => {
             <LogIn size={14} />
             {loading ? "Authenticating..." : "Sign In"}
           </button>
-
         </form>
 
         <div className="mt-6 pt-6 border-t border-neutral-100 text-center flex flex-col gap-2">
-          <Link 
+          <Link
             to={`/register?redirect=${encodeURIComponent(redirectTarget)}`}
             className="inline-flex items-center justify-center gap-1 px-4 py-2 hover:bg-neutral-50 border border-neutral-150 text-[10px] font-bold uppercase tracking-widest text-neutral-800 transition-colors"
           >
             <UserPlus size={12} /> Don't have an profile? Register
           </Link>
         </div>
-
       </div>
 
       {/* Audits credentials hints row */}
       <div className="mt-6 bg-neutral-50 p-4 border border-neutral-150 rounded-none text-[11px] text-neutral-500 leading-normal font-mono flex gap-2">
-        <HelpCircle size={15} className="text-neutral-600 flex-shrink-0 mt-0.5" />
+        <HelpCircle
+          size={15}
+          className="text-neutral-600 flex-shrink-0 mt-0.5"
+        />
         <div>
-          <span className="font-bold text-neutral-800">CORS Demonstration Mode</span>: You can log in using typical credentials <span className="underline font-bold text-neutral-700">customer@gmail.com</span> or <span className="underline font-bold text-neutral-700">demo@fashion.com</span> with password <span className="underline font-bold text-neutral-700">123456</span> instantly.
+          <span className="font-bold text-neutral-800">
+            CORS Demonstration Mode
+          </span>
+          : You can log in using typical credentials{" "}
+          <span className="underline font-bold text-neutral-700">
+            customer@gmail.com
+          </span>{" "}
+          or{" "}
+          <span className="underline font-bold text-neutral-700">
+            demo@fashion.com
+          </span>{" "}
+          with password{" "}
+          <span className="underline font-bold text-neutral-700">123456</span>{" "}
+          instantly.
         </div>
       </div>
-
     </div>
   );
 };

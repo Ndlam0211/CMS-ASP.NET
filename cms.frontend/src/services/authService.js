@@ -17,4 +17,20 @@ export const authService = {
       Address: userData.address,
     });
   },
+
+  forgotPassword: async ({ email }) => {
+    const response = await axiosInstance.post("/api/Auth/ForgotPassword", {
+      Email: email,
+    });
+    return response.data;
+  },
+
+  resetPassword: async ({ email, token, newPassword }) => {
+    const response = await axiosInstance.post("/api/Auth/ResetPassword", {
+      Email: email,
+      Token: token,
+      NewPassword: newPassword,
+    });
+    return response.data;
+  },
 };

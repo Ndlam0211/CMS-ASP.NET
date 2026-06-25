@@ -27,7 +27,7 @@ export const MainLayout = ({ children }) => {
   const dispatch = useDispatch();
 
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const { totalQuantity } = useSelector((state) => state.cart);
+  const { items } = useSelector((state) => state.cart);
   const { categories, loading: categoriesLoading } = useSelector(
     (state) => state.categories,
   );
@@ -84,7 +84,7 @@ export const MainLayout = ({ children }) => {
         categories={categories}
         isAuthenticated={isAuthenticated}
         user={user}
-        totalQuantity={totalQuantity}
+        totalQuantity={items.length}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         handleSearchSubmit={handleSearchSubmit}

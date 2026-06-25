@@ -64,7 +64,7 @@ export const CartPage = () => {
   const shippingCost = totalAmount >= shippingThreshold || totalAmount === 0 ? 0 : 15;
   const estimatedTaxRate = 0.1; // 10% tax
   const taxCost = totalAmount * estimatedTaxRate;
-  const grandTotal = totalAmount + shippingCost + taxCost;
+  const grandTotal = totalAmount + shippingCost;
 
   if (items.length === 0) {
     return (
@@ -249,12 +249,12 @@ export const CartPage = () => {
                 !
               </div>
             )}
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <span>Estimated Tax (10%)</span>
               <span className="font-bold text-neutral-900">
                 ${taxCost.toLocaleString("vi-VN")} ₫
               </span>
-            </div>
+            </div> */}
 
             <hr className="border-neutral-100 my-2" />
 

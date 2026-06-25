@@ -41,9 +41,9 @@ namespace CMS.Backend.Controllers
             }
 
             // 1. Kiểm tra tài khoản trong Database
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-            if (user != null)
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
                 // 2. Thiết lập danh tính (Claims)
                 var claims = new List<Claim>

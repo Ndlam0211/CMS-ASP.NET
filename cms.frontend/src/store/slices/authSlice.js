@@ -10,7 +10,10 @@ const initialState = {
   user: storedUser,
   loading: false,
   error: null,
-  isAuthenticated: !!storedUser
+  isAuthenticated: !!storedUser,
+  forgotPasswordSuccess: false,
+  resetPasswordSuccess: false,
+  message: null,
 };
 
 export const loginUser = createAsyncThunk(
@@ -61,6 +64,34 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      const data = await authService.forgotPassword({ email });
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async ({ email, token, newPassword }, { rejectWithValue }) => {
+    try {
+      const data = await authService.resetPassword({
+        email,
+        token,
+        newPassword,
+      });
+      return data;
+    } catch (error) {
+      return rejectWithValue(getErrorMessage(error));
+    }
+  },
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -73,7 +104,12 @@ const authSlice = createSlice({
     },
     clearAuthError: (state) => {
       state.error = null;
-    }
+    },
+    clearAuthMessage: (state) => {
+      state.message = null;
+      state.forgotPasswordSuccess = false;
+      state.resetPasswordSuccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -104,9 +140,43 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      // Forgot Password
+      .addCase(forgotPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+        state.forgotPasswordSuccess = false;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload?.message || action.payload?.Message;
+        state.forgotPasswordSuccess = true;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.forgotPasswordSuccess = false;
+      })
+      // Reset Password
+      .addCase(resetPassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+        state.resetPasswordSuccess = false;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload?.message || action.payload?.Message;
+        state.resetPasswordSuccess = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.resetPasswordSuccess = false;
       });
-  }
+  },
 });
 
-export const { logout, clearAuthError } = authSlice.actions;
+export const { logout, clearAuthError, clearAuthMessage } = authSlice.actions;
 export default authSlice.reducer;

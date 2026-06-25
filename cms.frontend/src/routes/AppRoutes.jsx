@@ -10,10 +10,13 @@ const BlogListPage = lazy(() => import("../pages/blog/BlogListPage"));
 const BlogDetailPage = lazy(() => import("../pages/blog/BlogDetailPage"));
 const LoginPage = lazy(() => import("../pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("../pages/auth/RegisterPage"));
+const ForgotPasswordPage = lazy(() => import("../pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("../pages/auth/ResetPasswordPage"));
 const CartPage = lazy(() => import("../pages/cart/CartPage"));
 const CheckoutPage = lazy(() => import("../pages/checkout/CheckoutPage"));
 const OrderHistoryPage = lazy(() => import("../pages/account/OrderHistoryPage"));
 const NotFound = lazy(() => import("../pages/notfound/NotFound"));
+
 
 // Clean loading placeholder with Atelier display branding
 const PageLoaderPlaceholder = () => (
@@ -42,6 +45,8 @@ export const AppRoutes = () => {
         {/* GUESTS / AUTH SESSIONS routes */}
         <Route path="/login" element={<MainLayout><LoginPage /></MainLayout>} />
         <Route path="/register" element={<MainLayout><RegisterPage /></MainLayout>} />
+        <Route path="/forgot-password" element={<MainLayout><ForgotPasswordPage /></MainLayout>} />
+        <Route path="/reset-password" element={<MainLayout><ResetPasswordPage /></MainLayout>} />
         
         {/* SHOP CARTS routes */}
         <Route path="/cart" element={<MainLayout><CartPage /></MainLayout>} />

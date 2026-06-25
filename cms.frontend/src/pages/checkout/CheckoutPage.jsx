@@ -45,7 +45,7 @@ export const CheckoutPage = () => {
   // Math totals
   const shippingCost = totalAmount >= 150 ? 0 : 15;
   const taxCost = totalAmount * 0.1; // 10% tax
-  const grandTotal = totalAmount + shippingCost + taxCost;
+  const grandTotal = totalAmount + shippingCost;
 
   // React Hook Form initialization
   const {
@@ -405,10 +405,10 @@ export const CheckoutPage = () => {
                 <span className="font-bold text-neutral-900">{shippingCost.toLocaleString("vi-VN")} ₫</span>
               )}
             </div>
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <span>Estimated Tax (10%)</span>
               <span className="font-bold text-neutral-900">{taxCost.toLocaleString("vi-VN")} ₫</span>
-            </div>
+            </div> */}
             <hr className="border-neutral-200 my-1 pb-1" />
             <div className="flex justify-between text-neutral-900 font-black text-sm">
               <span className="uppercase">Grand Total</span>

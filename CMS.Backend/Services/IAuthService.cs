@@ -7,5 +7,8 @@ namespace CMS.Backend.Services
     {
         Task<AuthResponse> RegisterAsync(CustomerRegisterRequest request);
         Task<AuthResponse> LoginAsync(CustomerLoginRequest request);
+
+        Task<AuthResponse> ForgotPasswordAsync(ForgotPasswordRequest request);
+        Task<AuthResponse> ResetPasswordAsync(ResetPasswordRequest request);
     }
 }

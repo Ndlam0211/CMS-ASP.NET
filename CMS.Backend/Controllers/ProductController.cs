@@ -99,7 +99,7 @@ namespace CMS.Backend.Controllers
         // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile? uploadImage)
+        public IActionResult Create([Bind("Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId,IsFeatured")] Product product, IFormFile? uploadImage)
         {
             if (!ModelState.IsValid)
             {
@@ -170,7 +170,7 @@ namespace CMS.Backend.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId")] Product product, IFormFile? uploadImage)
+        public IActionResult Edit(int id, [Bind("Id,Name,Description,Price,StockQuantity,ImageUrl,CategoryProductId,IsFeatured")] Product product, IFormFile? uploadImage)
         {
             if (id != product.Id)
                 return NotFound();
